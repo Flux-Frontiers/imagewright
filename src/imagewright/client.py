@@ -13,6 +13,8 @@ import gc
 import importlib
 import os
 import random
+from collections.abc import Callable
+from concurrent.futures import ThreadPoolExecutor
 from io import BytesIO
 from types import ModuleType
 from typing import Any
@@ -134,10 +136,28 @@ class ImageSynthesizer:
         self._cfg = config
         self._mflux_model: Any = None
         self._mflux_model_name: str | None = None
+        # One worker; it starts no thread until the in-process model is first used.
+        self._model_thread = ThreadPoolExecutor(
+            max_workers=1, thread_name_prefix="imagewright-flux"
+        )
 
     # ------------------------------------------------------------------
     # In-process model lifecycle
     # ------------------------------------------------------------------
+
+    def _on_model_thread[T](self, fn: Callable[..., T], *args: Any, **kwargs: Any) -> T:
+        """Run *fn* on this synthesizer's one model thread and return its result.
+
+        MLX ties a model to the thread that loaded it: a render on any other
+        thread fails with "There is no Stream(cpu, 0) in current thread". So the
+        load, every render and the unload all run on one thread, whichever
+        thread the caller is on. A server that preloads at startup and renders
+        in a worker thread depends on this.
+
+        :param fn: The model operation.
+        :returns: What *fn* returns; an exception it raises is raised here.
+        """
+        return self._model_thread.submit(fn, *args, **kwargs).result()
 
     def _load_mflux(self, model_name: str) -> Any:
         if self._mflux_model is not None and self._mflux_model_name == model_name:
@@ -157,7 +177,7 @@ class ImageSynthesizer:
 
         :raises MissingExtraError: When the ``flux`` extra is not installed.
         """
-        self._load_mflux(self._cfg.resolved_model())
+        self._on_model_thread(self._load_mflux, self._cfg.resolved_model())
 
     @property
     def model_loaded(self) -> bool:
@@ -172,6 +192,9 @@ class ImageSynthesizer:
 
         :returns: ``True`` if a model was unloaded, ``False`` if none was loaded.
         """
+        return self._on_model_thread(self._unload_mflux)
+
+    def _unload_mflux(self) -> bool:
         if self._mflux_model is None:
             return False
         self._mflux_model = None
@@ -217,7 +240,8 @@ class ImageSynthesizer:
         effective_model = model or cfg.resolved_model()
 
         if cfg.backend == ImageBackend.MFLUX_LOCAL:
-            return self._generate_local(
+            return self._on_model_thread(
+                self._generate_local,
                 prompt,
                 model=effective_model,
                 seed=seed,

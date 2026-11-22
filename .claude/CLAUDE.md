@@ -46,6 +46,10 @@ floor.
   (`MissingExtraError`), not raise a bare ImportError.
 - Never import a model stack (mflux, mlx, openai, torch, diffusers) at
   module scope outside the module that owns it.
+- The in-process model belongs to one thread. MLX refuses a render on any
+  thread but the one that loaded the model, so `ImageSynthesizer` runs the
+  load, every render and the unload on its own worker thread. Never call the
+  model from another thread directly; the test fake enforces the same rule.
 - No test may download a model or call a paid API. Fake the model object, and
   run the real FastAPI app and the real client around it.
 - A server binds `127.0.0.1` unless told otherwise; it has no authentication.

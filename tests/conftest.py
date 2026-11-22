@@ -228,8 +228,13 @@ def fake_flux(monkeypatch: pytest.MonkeyPatch) -> FakeFluxStack:
     class Flux2Klein:
         def __init__(self, model_path: str) -> None:
             stack.loads.append(model_path)
+            self._thread = threading.get_ident()
 
         def generate_image(self, **kwargs: Any) -> SimpleNamespace:
+            # MLX ties a model to the thread that loaded it; the real one fails
+            # this way when a render runs on another thread.
+            if threading.get_ident() != self._thread:
+                raise RuntimeError("There is no Stream(cpu, 0) in current thread.")
             stack.calls.append(kwargs)
             stack.rendering.set()
             if stack.gate is not None:

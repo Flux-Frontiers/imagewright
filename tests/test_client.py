@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import base64
 import sys
+from concurrent.futures import ThreadPoolExecutor
 
 import httpx
 import pytest
@@ -308,3 +309,24 @@ def test_openai_without_openai_names_the_extra() -> None:
 
 def test_missing_extra_is_an_import_error() -> None:
     assert issubclass(MissingExtraError, ImportError)
+
+
+def test_in_process_model_works_from_any_thread(fake_flux: FakeFluxStack) -> None:
+    """Load, render and unload each from a different thread, as a server does.
+
+    The fake, like MLX, refuses a render on any thread but the one that loaded
+    the model.
+    """
+    synth = ImageSynthesizer(ImageConfig(backend=ImageBackend.MFLUX_LOCAL))
+
+    def on_new_thread(fn, *args, **kwargs):
+        with ThreadPoolExecutor(max_workers=1) as pool:
+            return pool.submit(fn, *args, **kwargs).result()
+
+    on_new_thread(synth.load_model)
+    image = on_new_thread(synth.generate, "a fox", size="64x48")
+    assert image.size == (64, 48)
+    assert synth.generate("a hare", size="32x32").size == (32, 32)
+    assert on_new_thread(synth.unload_model) is True
+    assert len(fake_flux.loads) == 1
+    assert len(fake_flux.calls) == 2
