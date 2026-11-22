@@ -298,9 +298,21 @@ def test_generate_b64_through_the_server(server: FluxServer):
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.parametrize("module", ["imagewright.flux_server", "imagewright.sdxl_server"])
+@pytest.mark.parametrize(
+    "module", ["imagewright.flux_server", "imagewright.sdxl_server", "imagewright.mcp_server"]
+)
 def test_importing_a_server_loads_no_server_or_model_stack(module: str):
-    heavy = ("fastapi", "uvicorn", "pydantic", "starlette", "mflux", "mlx", "torch", "diffusers")
+    heavy = (
+        "fastapi",
+        "uvicorn",
+        "pydantic",
+        "starlette",
+        "mcp",
+        "mflux",
+        "mlx",
+        "torch",
+        "diffusers",
+    )
     code = (
         f"import sys, {module}\n"
         f"loaded = [m for m in {heavy!r} if m in sys.modules]\n"

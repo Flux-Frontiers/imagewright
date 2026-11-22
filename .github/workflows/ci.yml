@@ -127,6 +127,7 @@ jobs:
     #   3. every packaged submodule imports.
     #   4. with no server and no extras, `generate` fails and names the fix.
     #   5. with no extras, `serve` fails and names its pip command.
+    #   6. with no extras, `imagewright-mcp` fails and names its pip command.
     steps:
       - uses: actions/checkout@v7
 
@@ -240,3 +241,15 @@ jobs:
           }
           check 'pip install "imagewright[serve,flux]"'
           check 'pip install "imagewright[serve,sdxl]"' --backend sdxl
+
+      - name: imagewright-mcp with no extras names the pip command
+        run: |
+          cd /tmp
+          if /tmp/smoke/bin/imagewright-mcp < /dev/null > /tmp/mcp.out 2>&1; then
+            cat /tmp/mcp.out; echo "imagewright-mcp started with no mcp extra"; exit 1
+          fi
+          cat /tmp/mcp.out
+          grep -qF 'pip install "imagewright[mcp]"' /tmp/mcp.out \
+            || { echo "imagewright-mcp did not name its pip command"; exit 1; }
+          ! grep -q "Traceback" /tmp/mcp.out \
+            || { echo "imagewright-mcp raised instead of naming the fix"; exit 1; }

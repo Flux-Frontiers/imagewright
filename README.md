@@ -20,8 +20,8 @@ depended on a knowledge graph, and neither does this package.
 
 ## Status
 
-Pre-alpha and private. The client and both image servers work; the MCP tool
-is next.
+Pre-alpha and private. The client, both image servers and the MCP tool
+work.
 
 | Piece | State | What it does |
 |---|---|---|
@@ -31,7 +31,7 @@ is next.
 | `imagewright generate` | Done | Writes one PNG from a prompt |
 | FLUX server | Done | `imagewright serve`. Serves FLUX.2 Klein through mflux on Apple Silicon. Keeps the model loaded between requests and can unload it when idle |
 | SDXL server | Done | `imagewright serve --backend sdxl`. Serves SDXL-Lightning through diffusers on CUDA, MPS or CPU |
-| MCP tool | Planned | Returns a generated image to an MCP client, compressed under the client's size limit |
+| MCP tool | Done | `imagewright-mcp`. Returns a generated image to an MCP client, compressed under the client's size limit. Needs the `mcp` extra |
 
 ## Install
 
@@ -45,6 +45,7 @@ pip install "imagewright[flux]"        # + FLUX.2 Klein in process (Apple Silico
 pip install "imagewright[openai]"      # + OpenAI gpt-image-1
 pip install "imagewright[serve,flux]"  # + the FLUX server
 pip install "imagewright[serve,sdxl]"  # + the SDXL-Lightning server
+pip install "imagewright[mcp]"         # + the imagewright-mcp server
 ```
 
 | Extra | Installs | For |
@@ -53,10 +54,12 @@ pip install "imagewright[serve,sdxl]"  # + the SDXL-Lightning server
 | `openai` | openai | The OpenAI backend |
 | `serve` | fastapi, uvicorn, pydantic | Either server |
 | `sdxl` | torch, diffusers, transformers, accelerate, safetensors, huggingface_hub | The SDXL server |
+| `mcp` | mcp | `imagewright-mcp` and `as_mcp_image()` |
 
 A backend whose extra is missing raises `MissingExtraError`, whose message
 names the `pip install` command that fixes it. `imagewright serve` without
-its extras exits with the same message.
+its extras, or `imagewright-mcp` without `mcp`, exits with the same
+message.
 
 ## Generate an image
 
@@ -154,6 +157,32 @@ runs. To run a second one for a test, give it another port, for example
 
 The SDXL server builds its pipeline before it opens its port.
 
+## Use it from an MCP client
+
+`imagewright-mcp` is an MCP server over stdio with one tool, `generate`:
+
+| Argument | Meaning |
+|---|---|
+| `prompt` | Description of the image. Required; at most 4000 characters |
+| `size` | `WIDTHxHEIGHT`. Default: `1536x1024` |
+| `seed` | Integer seed for a reproducible image. Default: random |
+| `steps` | Inference steps, 1-50. Default: `IMAGE_STEPS`, else 4 |
+
+The tool chooses its backend on its first call, in the same order as
+`imagewright generate`, and keeps it for the life of the server, so an
+in-process model loads once. It returns the image as PNG, or as JPEG when the
+PNG is over 3.75 MB (5 MB once base64-encoded, the usual MCP client limit).
+
+To add it to Claude Code, put this in the project's `.mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "imagewright": { "command": "imagewright-mcp" }
+  }
+}
+```
+
 ## Python API
 
 ```python
@@ -174,6 +203,9 @@ image.save("lighthouse.png")
 | `DEFAULT_IMAGE_ENDPOINTS` | `http://localhost:8090`, `http://localhost:8091` |
 | `NoImageBackendError` | Raised when no backend is available; the message lists the fixes |
 | `MissingExtraError` | Raised when a backend's extra is not installed; a subclass of `ImportError` |
+| `compress_image(image, max_bytes=MCP_IMAGE_MAX_BYTES)` | Encodes a PIL image in at most `max_bytes`: PNG if it fits, else JPEG at quality 85, 70 and 50, else JPEG shrunk by a quarter per round until it fits. Returns `(data, "png" or "jpeg")`. Needs only Pillow |
+| `as_mcp_image(image, max_bytes=MCP_IMAGE_MAX_BYTES)` | `compress_image`, wrapped as the `mcp.server.fastmcp.Image` a FastMCP tool returns. Needs the `mcp` extra |
+| `MCP_IMAGE_MAX_BYTES` | 3,750,000 |
 
 ## Install for development
 
@@ -186,8 +218,8 @@ poetry install --with dev
 .venv/bin/pre-commit install
 ```
 
-The tests need no extras: the dev group carries the server stack (fastapi,
-uvicorn, pydantic), and the tests fake the model stacks. Install the `flux`
+The tests need no extras: the dev group carries the server and MCP stacks
+(fastapi, uvicorn, pydantic, mcp), and the tests fake the model stacks. Install the `flux`
 or `sdxl` extra only to run a real model.
 
 ## Run the checks

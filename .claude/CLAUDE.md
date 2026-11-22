@@ -23,8 +23,8 @@ env -u VIRTUAL_ENV -u POETRY_ACTIVE .venv/bin/pytest --cov
 env -u VIRTUAL_ENV -u POETRY_ACTIVE .venv/bin/pre-commit run --all-files
 ```
 
-The tests need no extras: the dev group carries fastapi, uvicorn and
-pydantic, and the tests fake the model stacks, so CI runs them on a plain
+The tests need no extras: the dev group carries fastapi, uvicorn, pydantic
+and mcp, and the tests fake the model stacks, so CI runs them on a plain
 `--with dev` install. Install the `flux` and `sdxl` extras only for live
 runs against a real model, for example
 `poetry install --with dev -E serve -E flux`.

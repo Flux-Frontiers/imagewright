@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **`imagewright-mcp`**, an MCP server over stdio with one `generate` tool
+  (`prompt`, `size`, `seed`, `steps`, bounded). It chooses its backend with
+  `resolve_image_config` on the first call and keeps it. Needs the new `mcp`
+  extra (`mcp>=1.23.0,<2`); without it the command exits naming the pip
+  command.
+- **`compress_image` and `as_mcp_image`** (`imagewright.mcp_image`, also
+  exported from `imagewright`), from gutenberg_kg's `_compress_for_mcp` and
+  `_as_mcp_image`. They fit an image under `MCP_IMAGE_MAX_BYTES` (3,750,000)
+  and keep downscaling until it fits instead of giving up after two rounds.
+  `as_mcp_image` returns the bytes in memory rather than writing a temporary
+  file. `compress_image` needs only Pillow.
 - **Image servers.** `imagewright serve` runs the FLUX.2 Klein server
   (`imagewright.flux_server`, port 8090) or, with `--backend sdxl`, the
   SDXL-Lightning server (`imagewright.sdxl_server`, port 8091). Both are
