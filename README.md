@@ -6,6 +6,7 @@
 [![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)](https://github.com/Flux-Frontiers/imagewright/releases)
 [![CI](https://github.com/Flux-Frontiers/imagewright/actions/workflows/ci.yml/badge.svg)](https://github.com/Flux-Frontiers/imagewright/actions/workflows/ci.yml)
 [![Docs](https://github.com/Flux-Frontiers/imagewright/actions/workflows/docs.yml/badge.svg)](https://flux-frontiers.github.io/imagewright/)
+[![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.24450350-blue.svg)](https://doi.org/10.5281/zenodo.24450350)
 
 **imagewright** -- image generation over one HTTP contract.
 
@@ -254,7 +255,7 @@ licensed for non-commercial use only.
 
 If you use imagewright in your research or project, please cite it:
 
-> Suchanek, E. G. (2026). *imagewright: Image Generation Over One HTTP Contract* (Version 0.1.0) [Software]. Flux-Frontiers. https://github.com/Flux-Frontiers/imagewright
+> Suchanek, E. G. (2026). *imagewright: Image Generation Over One HTTP Contract* (Version 0.1.0) [Software]. Flux-Frontiers. https://doi.org/10.5281/zenodo.24450350
 
 ```bibtex
 @software{suchanek_imagewright,
@@ -263,11 +264,11 @@ If you use imagewright in your research or project, please cite it:
   version   = {0.1.0},
   year      = {2026},
   publisher = {Flux-Frontiers},
+  doi       = {10.5281/zenodo.24450350},
   url       = {https://github.com/Flux-Frontiers/imagewright},
 }
 ```
 
-A Zenodo DOI is added here and in [CITATION.cff](https://github.com/Flux-Frontiers/imagewright/blob/main/CITATION.cff)
-after the first release is archived. See the
+See the
 [changelog](https://github.com/Flux-Frontiers/imagewright/blob/main/CHANGELOG.md)
 for release history.
