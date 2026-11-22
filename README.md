@@ -20,17 +20,192 @@ depended on a knowledge graph, and neither does this package.
 
 ## Status
 
-Pre-alpha and private. The repository has its layout, CI and hooks, and a
-command line that reports its version. It does not generate images yet.
+Pre-alpha and private. The client, both image servers and the MCP tool
+work.
 
-| Planned | What it does |
+| Piece | State | What it does |
+|---|---|---|
+| Client | Done | Sends a prompt to any server that answers the contract and returns a PIL image. Finds a local server on ports 8090 and 8091 when none is configured |
+| In-process mode | Done | Renders with FLUX.2 Klein in the calling process, with no server running. Needs the `flux` extra |
+| OpenAI backend | Done | Sends the prompt to `gpt-image-1`. Needs the `openai` extra |
+| `imagewright generate` | Done | Writes one PNG from a prompt |
+| FLUX server | Done | `imagewright serve`. Serves FLUX.2 Klein through mflux on Apple Silicon. Keeps the model loaded between requests and can unload it when idle |
+| SDXL server | Done | `imagewright serve --backend sdxl`. Serves SDXL-Lightning through diffusers on CUDA, MPS or CPU |
+| MCP tool | Done | `imagewright-mcp`. Returns a generated image to an MCP client, compressed under the client's size limit. Needs the `mcp` extra |
+
+## Install
+
+The core install talks to an image server. Extras add the other backends.
+imagewright is not on PyPI yet; until it is, install from a clone or a built
+wheel with the same extras.
+
+```bash
+pip install imagewright                # client for a running image server
+pip install "imagewright[flux]"        # + FLUX.2 Klein in process (Apple Silicon)
+pip install "imagewright[openai]"      # + OpenAI gpt-image-1
+pip install "imagewright[serve,flux]"  # + the FLUX server
+pip install "imagewright[serve,sdxl]"  # + the SDXL-Lightning server
+pip install "imagewright[mcp]"         # + the imagewright-mcp server
+```
+
+| Extra | Installs | For |
+|---|---|---|
+| `flux` | mflux | FLUX.2 Klein in process, and the FLUX server |
+| `openai` | openai | The OpenAI backend |
+| `serve` | fastapi, uvicorn, pydantic | Either server |
+| `sdxl` | torch, diffusers, transformers, accelerate, safetensors, huggingface_hub | The SDXL server |
+| `mcp` | mcp | `imagewright-mcp` and `as_mcp_image()` |
+
+A backend whose extra is missing raises `MissingExtraError`, whose message
+names the `pip install` command that fixes it. `imagewright serve` without
+its extras, or `imagewright-mcp` without `mcp`, exits with the same
+message.
+
+## Generate an image
+
+```bash
+imagewright generate "a lighthouse at dusk, oil painting"
+```
+
+The command writes `imagewright-YYYYMMDD-HHMMSS.png` in the current directory
+and prints its path. Options:
+
+| Option | Meaning |
 |---|---|
-| Client | Sends a prompt to any server that answers the contract and returns a PIL image. Finds a local server on ports 8090 and 8091 when none is configured |
-| FLUX server | Serves FLUX.2 Klein through mflux on Apple Silicon. Keeps the model loaded between requests and can unload it when idle |
-| SDXL server | Serves SDXL-Lightning through diffusers on CUDA, MPS or CPU |
-| In-process mode | Renders with FLUX.2 Klein in the calling process, with no server running |
-| OpenAI backend | Sends the prompt to `gpt-image-1` |
-| MCP tool | Returns a generated image to an MCP client, compressed under the client's size limit |
+| `--size WxH` | Output size, for example `1536x1024`. Default: 3:2, 1536x1024 |
+| `--seed N` | Random seed for a reproducible image |
+| `--steps N` | Inference steps for the FLUX backends. Default: 4 |
+| `--backend NAME` | `mflux-serve`, `mflux-local` or `openai` |
+| `--endpoint URL` | Image server base URL. Implies `mflux-serve` |
+| `-o PATH` | Where to write the PNG |
+
+### How the backend is chosen
+
+1. `--backend` and `--endpoint`. An endpoint with no backend means
+   `mflux-serve`, whatever `IMAGE_BACKEND` says.
+2. `IMAGE_BACKEND` and `IMAGE_ENDPOINT` (or `GUTENKG_IMAGE_ENDPOINT`) from
+   the environment. A configured endpoint is used without probing it.
+3. A server that answers on `http://localhost:8090` or
+   `http://localhost:8091`. A server answers if `/health` or `/v1/models`
+   returns 200.
+4. FLUX.2 Klein in process, if the `flux` extra is installed. A warning says
+   that no server was found and the model is loading in process.
+5. Otherwise the command fails with a list of the ways to fix it.
+
+A model loads in process only at step 4, or when `mflux-local` is named.
+
+### Environment variables
+
+| Variable | Meaning |
+|---|---|
+| `IMAGE_BACKEND` | `mflux-serve`, `mflux-local` or `openai` |
+| `IMAGE_ENDPOINT` | Image server base URL. Fallback: `GUTENKG_IMAGE_ENDPOINT` |
+| `IMAGE_MODEL` | Model id. Fallback: `GUTENKG_IMAGE_MODEL` |
+| `IMAGE_API_KEY` | OpenAI key. Fallback: `OPENAI_API_KEY` |
+| `IMAGE_STEPS` | Inference steps. Default: 4 |
+
+## Run an image server
+
+```bash
+imagewright serve                    # FLUX.2 Klein on 127.0.0.1:8090
+imagewright serve --backend sdxl     # SDXL-Lightning on 127.0.0.1:8091
+```
+
+Both servers answer the same contract, the one gutenberg_kg's image servers
+answer, so gutenberg_kg's worker and apps can point at either one unchanged:
+
+| Route | Answers |
+|---|---|
+| `GET /health` | `status`, `backend` and `model`; the FLUX server adds `loaded` and `idle_unload_s`. Does no model work, so it answers during a render and before the weights load |
+| `GET /v1/models` | The one model the server serves, in OpenAI list format |
+| `POST /v1/images/generations` | `prompt` (required), `size` (`WIDTHxHEIGHT`), `seed`, `num_inference_steps`, `response_format`; the SDXL server also takes `negative_prompt`. Returns `{"created": ..., "data": [{"b64_json": ...}]}`, or `{"filepath": ...}` for `response_format=filepath` |
+
+Each server renders one image at a time. A size that does not parse
+gives 1536x1024 on FLUX and 1024x1024 on SDXL. The SDXL server runs the
+step count its Lightning UNet was trained for, whatever the request asks.
+
+| Option | Meaning |
+|---|---|
+| `--backend flux\|sdxl` | Which server. Default: `flux` |
+| `--host HOST` | Address to bind. Default: `MFLUX_SERVER_HOST` (`SDXL_SERVER_HOST` for sdxl), else `127.0.0.1` |
+| `--port PORT` | Port to bind. Default: `MFLUX_SERVER_PORT` (`SDXL_SERVER_PORT` for sdxl), else 8090 (8091 for sdxl) |
+
+The servers have no authentication, so they bind `127.0.0.1` by default.
+gutenberg_kg's servers bound `0.0.0.0`; pass `--host 0.0.0.0` to share a
+server on a network you trust.
+
+Run one FLUX server per machine. Each holds 12-15 GB with the model loaded,
+and every FLUX server defaults to port 8090, including the one gutenberg_kg
+runs. To run a second one for a test, give it another port, for example
+`--port 8092`.
+
+### Server environment variables
+
+| Variable | Server | Meaning |
+|---|---|---|
+| `IMAGE_MODEL` | FLUX | HF repo for FLUX.2 Klein. Fallback: `GUTENKG_IMAGE_MODEL`. Default: `mlx-community/flux2-klein-4b-4bit` |
+| `IMAGE_STEPS` | FLUX | Steps when a request does not set them. Default: 4 |
+| `IMAGE_PRELOAD` | FLUX | `1`, `true` or `yes` loads the model before the server accepts requests. Default: load on the first request |
+| `IMAGE_IDLE_UNLOAD_S` | FLUX | Unload the model after this many idle seconds, so a small Mac gets its memory back; the next request reloads it. Default: 0, never |
+| `MFLUX_SERVER_HOST`, `MFLUX_SERVER_PORT` | FLUX | Bind address and port, when `--host` and `--port` are not given |
+| `SDXL_MODEL` | SDXL | `sdxl_lightning_2`, `sdxl_lightning_4` (default) or `sdxl_lightning_8` |
+| `SDXL_BASE` | SDXL | SDXL base repo. Default: `stabilityai/stable-diffusion-xl-base-1.0` |
+| `SDXL_OFFLINE` | SDXL | `1` never contacts Hugging Face; the weights must be cached. Default: download them on first run (about 7 GB) |
+| `MPS_DTYPE` | SDXL | `float16` (default, with the fp16-fix VAE) or `float32` |
+| `SDXL_SERVER_HOST`, `SDXL_SERVER_PORT` | SDXL | Bind address and port, when `--host` and `--port` are not given |
+| `IMAGE_OUTPUT_DIR` | Both | Where `response_format=filepath` images go. Default: `imagewright_images` in the system temp directory |
+
+The SDXL server builds its pipeline before it opens its port.
+
+## Use it from an MCP client
+
+`imagewright-mcp` is an MCP server over stdio with one tool, `generate`:
+
+| Argument | Meaning |
+|---|---|
+| `prompt` | Description of the image. Required; at most 4000 characters |
+| `size` | `WIDTHxHEIGHT`. Default: `1536x1024` |
+| `seed` | Integer seed for a reproducible image. Default: random |
+| `steps` | Inference steps, 1-50. Default: `IMAGE_STEPS`, else 4 |
+
+The tool chooses its backend on its first call, in the same order as
+`imagewright generate`, and keeps it for the life of the server, so an
+in-process model loads once. It returns the image as PNG, or as JPEG when the
+PNG is over 3.75 MB (5 MB once base64-encoded, the usual MCP client limit).
+
+To add it to Claude Code, put this in the project's `.mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "imagewright": { "command": "imagewright-mcp" }
+  }
+}
+```
+
+## Python API
+
+```python
+from imagewright import ImageSynthesizer, resolve_image_config
+
+synth = ImageSynthesizer(resolve_image_config())  # same order as the CLI
+image = synth.generate("a lighthouse at dusk", aspect_ratio="3:2", seed=7)
+image.save("lighthouse.png")
+```
+
+| Name | What it is |
+|---|---|
+| `ImageSynthesizer(config)` | `generate(prompt, *, aspect_ratio="3:2", seed=None, steps=None, model=None, size=None)` returns a PIL image; `generate_b64(...)` returns a base64 PNG. For `mflux-local`, `load_model()`, `model_loaded` and `unload_model()` load, report and release the in-process model |
+| `ImageConfig`, `ImageBackend` | The backend and its settings |
+| `image_config_from_env()` | An `ImageConfig` from the environment variables above |
+| `resolve_image_config(backend=None, endpoint=None)` | Chooses the backend in the order above |
+| `discover_image_endpoint(candidates=None)` | The first image server that answers, or `None`. By default it probes `IMAGE_ENDPOINT` and `GUTENKG_IMAGE_ENDPOINT` (when set) before the two localhost ports |
+| `DEFAULT_IMAGE_ENDPOINTS` | `http://localhost:8090`, `http://localhost:8091` |
+| `NoImageBackendError` | Raised when no backend is available; the message lists the fixes |
+| `MissingExtraError` | Raised when a backend's extra is not installed; a subclass of `ImportError` |
+| `compress_image(image, max_bytes=MCP_IMAGE_MAX_BYTES)` | Encodes a PIL image in at most `max_bytes`: PNG if it fits, else JPEG at quality 85, 70 and 50, else JPEG shrunk by a quarter per round until it fits. Returns `(data, "png" or "jpeg")`. Needs only Pillow |
+| `as_mcp_image(image, max_bytes=MCP_IMAGE_MAX_BYTES)` | `compress_image`, wrapped as the `mcp.server.fastmcp.Image` a FastMCP tool returns. Needs the `mcp` extra |
+| `MCP_IMAGE_MAX_BYTES` | 3,750,000 |
 
 ## Install for development
 
@@ -42,6 +217,10 @@ cd imagewright
 poetry install --with dev
 .venv/bin/pre-commit install
 ```
+
+The tests need no extras: the dev group carries the server and MCP stacks
+(fastapi, uvicorn, pydantic, mcp), and the tests fake the model stacks. Install the `flux`
+or `sdxl` extra only to run a real model.
 
 ## Run the checks
 

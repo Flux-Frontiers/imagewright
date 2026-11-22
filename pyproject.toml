@@ -15,6 +15,10 @@
 # ----------------------
 #   poetry install                      core runtime only
 #   poetry install --with dev           + pytest, ruff, ty, pre-commit
+#   poetry install -E flux -E openai    + in-process FLUX, OpenAI backend
+#   poetry install -E serve -E flux     + `imagewright serve` (FLUX server)
+#   poetry install -E serve -E sdxl     + `imagewright serve --backend sdxl`
+#   poetry install -E mcp               + `imagewright-mcp`
 #
 # Run tests
 # ---------
@@ -50,11 +54,34 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
 ]
 requires-python = ">=3.12,<3.14"
-# Only what src/ imports today. The client's httpx and pillow, and the `flux`,
-# `sdxl` and `mcp` extras, arrive with the code that needs them.
+# Only what the client imports. Servers and model stacks are extras.
 dependencies = [
     "click>=8.1.0,<9",
+    "httpx>=0.27.0",
+    "pillow>=13.0.0",
 ]
+
+[project.optional-dependencies]
+# In-process FLUX.2 Klein (Apple Silicon). 0.24.0 has the
+# mflux.models.flux2.variants.txt2img.flux2_klein import path the client uses.
+flux = ["mflux>=0.24.0"]
+# OpenAI gpt-image-1 / DALL-E.
+openai = ["openai>=1.30.0"]
+# The HTTP servers behind `imagewright serve`. The FLUX server also needs
+# `flux`; the SDXL server also needs `sdxl`. Floors from gutenberg_kg's
+# docker/requirements-image.txt and requirements-sdxl.txt.
+serve = ["fastapi>=0.116.0", "uvicorn>=0.30.0", "pydantic>=2.8.0"]
+# SDXL-Lightning through diffusers (CUDA, MPS or CPU).
+sdxl = [
+    "torch>=2.4.0",
+    "diffusers>=0.30.0",
+    "transformers>=4.44.0",
+    "accelerate>=0.33.0",
+    "safetensors>=0.4.0",
+    "huggingface_hub>=0.24.0",
+]
+# `imagewright-mcp` and as_mcp_image(). The fleet's MCP floor and cap.
+mcp = ["mcp>=1.23.0,<2"]
 
 [project.urls]
 Homepage   = "https://github.com/Flux-Frontiers/imagewright"
@@ -64,6 +91,7 @@ Changelog  = "https://github.com/Flux-Frontiers/imagewright/blob/main/CHANGELOG.
 
 [project.scripts]
 imagewright = "imagewright.cli:cli"
+imagewright-mcp = "imagewright.mcp_server:main"
 
 # ---------------------------------------------------------------------------
 # Dev tooling (Poetry group, not a PEP 621 extra)
@@ -74,6 +102,12 @@ optional = true
 
 [tool.poetry.group.dev.dependencies]
 detect-secrets = ">=1.5.0"
+# The server and MCP stacks, so the tests drive the real FastAPI apps and MCP
+# server without the `serve` or `mcp` extra. The model stacks (mflux, torch, diffusers) are never here.
+fastapi = ">=0.116.0"
+mcp = ">=1.23.0,<2"
+pydantic = ">=2.8.0"
+uvicorn = ">=0.30.0"
 pre-commit = ">=4.5.1"
 # >=9.0.3 is a security floor, not a preference: GHSA-6w46-j5rx-g56g.
 pytest = ">=9.0.3"
