@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **A Zenodo DOI.** The concept DOI `10.5281/zenodo.24450350` is in the README
+  (badge, APA and BibTeX) and in `CITATION.cff`. It always resolves to the
+  latest archived version.
+
 ## [0.1.0] - 2026-11-22
 
 ### Added
