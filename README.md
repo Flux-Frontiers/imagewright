@@ -20,17 +20,94 @@ depended on a knowledge graph, and neither does this package.
 
 ## Status
 
-Pre-alpha and private. The repository has its layout, CI and hooks, and a
-command line that reports its version. It does not generate images yet.
+Pre-alpha and private. The client works; the servers and the MCP tool are
+next.
 
-| Planned | What it does |
+| Piece | State | What it does |
+|---|---|---|
+| Client | Done | Sends a prompt to any server that answers the contract and returns a PIL image. Finds a local server on ports 8090 and 8091 when none is configured |
+| In-process mode | Done | Renders with FLUX.2 Klein in the calling process, with no server running. Needs the `flux` extra |
+| OpenAI backend | Done | Sends the prompt to `gpt-image-1`. Needs the `openai` extra |
+| `imagewright generate` | Done | Writes one PNG from a prompt |
+| FLUX server | Planned | Serves FLUX.2 Klein through mflux on Apple Silicon. Keeps the model loaded between requests and can unload it when idle |
+| SDXL server | Planned | Serves SDXL-Lightning through diffusers on CUDA, MPS or CPU |
+| MCP tool | Planned | Returns a generated image to an MCP client, compressed under the client's size limit |
+
+## Install
+
+The core install talks to an image server. Extras add the other backends.
+
+```bash
+pip install imagewright              # client for a running image server
+pip install "imagewright[flux]"      # + FLUX.2 Klein in process (Apple Silicon)
+pip install "imagewright[openai]"    # + OpenAI gpt-image-1
+```
+
+A backend whose extra is missing raises `MissingExtraError`, whose message
+names the `pip install` command that fixes it.
+
+## Generate an image
+
+```bash
+imagewright generate "a lighthouse at dusk, oil painting"
+```
+
+The command writes `imagewright-YYYYMMDD-HHMMSS.png` in the current directory
+and prints its path. Options:
+
+| Option | Meaning |
 |---|---|
-| Client | Sends a prompt to any server that answers the contract and returns a PIL image. Finds a local server on ports 8090 and 8091 when none is configured |
-| FLUX server | Serves FLUX.2 Klein through mflux on Apple Silicon. Keeps the model loaded between requests and can unload it when idle |
-| SDXL server | Serves SDXL-Lightning through diffusers on CUDA, MPS or CPU |
-| In-process mode | Renders with FLUX.2 Klein in the calling process, with no server running |
-| OpenAI backend | Sends the prompt to `gpt-image-1` |
-| MCP tool | Returns a generated image to an MCP client, compressed under the client's size limit |
+| `--size WxH` | Output size, for example `1536x1024`. Default: 3:2, 1536x1024 |
+| `--seed N` | Random seed for a reproducible image |
+| `--steps N` | Inference steps for the FLUX backends. Default: 4 |
+| `--backend NAME` | `mflux-serve`, `mflux-local` or `openai` |
+| `--endpoint URL` | Image server base URL. Implies `mflux-serve` |
+| `-o PATH` | Where to write the PNG |
+
+### How the backend is chosen
+
+1. `--backend` and `--endpoint`. An endpoint with no backend means
+   `mflux-serve`.
+2. `IMAGE_BACKEND` and `IMAGE_ENDPOINT` from the environment.
+3. A server that answers on `IMAGE_ENDPOINT`, `GUTENKG_IMAGE_ENDPOINT`,
+   `http://localhost:8090` or `http://localhost:8091`. A server answers if
+   `/health` or `/v1/models` returns 200.
+4. FLUX.2 Klein in process, if the `flux` extra is installed. A warning says
+   that no server was found and the model is loading in process.
+5. Otherwise the command fails with a list of the ways to fix it.
+
+A model loads in process only at step 4, or when `mflux-local` is named.
+
+### Environment variables
+
+| Variable | Meaning |
+|---|---|
+| `IMAGE_BACKEND` | `mflux-serve`, `mflux-local` or `openai` |
+| `IMAGE_ENDPOINT` | Image server base URL. Fallback: `GUTENKG_IMAGE_ENDPOINT` |
+| `IMAGE_MODEL` | Model id. Fallback: `GUTENKG_IMAGE_MODEL` |
+| `IMAGE_API_KEY` | OpenAI key. Fallback: `OPENAI_API_KEY` |
+| `IMAGE_STEPS` | Inference steps. Default: 4 |
+
+## Python API
+
+```python
+from imagewright import ImageSynthesizer, resolve_image_config
+
+synth = ImageSynthesizer(resolve_image_config())  # same order as the CLI
+image = synth.generate("a lighthouse at dusk", aspect_ratio="3:2", seed=7)
+image.save("lighthouse.png")
+```
+
+| Name | What it is |
+|---|---|
+| `ImageSynthesizer(config)` | `generate(prompt, *, aspect_ratio="3:2", seed=None, steps=None, model=None, size=None)` returns a PIL image; `generate_b64(...)` returns a base64 PNG. For `mflux-local`, `model_loaded` and `unload_model()` report and release the in-process model |
+| `ImageConfig`, `ImageBackend` | The backend and its settings |
+| `image_config_from_env()` | An `ImageConfig` from the environment variables above |
+| `resolve_image_config(backend=None, endpoint=None)` | Chooses the backend in the order above |
+| `discover_image_endpoint(candidates=None)` | The first image server that answers, or `None` |
+| `DEFAULT_IMAGE_ENDPOINTS` | `http://localhost:8090`, `http://localhost:8091` |
+| `NoImageBackendError` | Raised when no backend is available; the message lists the fixes |
+| `MissingExtraError` | Raised when a backend's extra is not installed; a subclass of `ImportError` |
 
 ## Install for development
 

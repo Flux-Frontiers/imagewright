@@ -33,12 +33,12 @@ floor.
 - The HTTP contract is fixed by its consumers: `/health`, `/v1/models` and
   `/v1/images/generations`, with the request fields and both response formats
   `gutenberg_kg`'s servers have today. A change to it is a breaking change.
-- Extras are user-facing features: `flux` (mflux, Apple Silicon), `sdxl`
-  (torch and diffusers) and `mcp`. A core install must import and run the
-  client without any of them, and a command that needs an extra must name it
-  in its error, not raise ImportError.
-- Never import a model stack (mflux, mlx, torch, diffusers) at module scope
-  outside the module that owns it.
+- Extras are user-facing features: `flux` (mflux, Apple Silicon), `openai`,
+  `sdxl` (torch and diffusers) and `mcp`. A core install must import and run
+  the client without any of them, and a command that needs an extra must name
+  it in its error (`MissingExtraError`), not raise a bare ImportError.
+- Never import a model stack (mflux, mlx, openai, torch, diffusers) at
+  module scope outside the module that owns it.
 - No test may download a model or call a paid API. Fake the model object, and
   run the real FastAPI app and the real client around it.
 - A server binds `127.0.0.1` unless told otherwise; it has no authentication.

@@ -9,5 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **The client.** `ImageSynthesizer`, `ImageConfig`, `ImageBackend` and
+  `image_config_from_env`, copied from `kg_utils.synthesis` with the same
+  names and signatures. Backends: `mflux-serve` (HTTP), `mflux-local`
+  (FLUX.2 Klein in process) and `openai`.
+- **In-process model lifecycle.** `ImageSynthesizer.model_loaded` and
+  `unload_model()`, from `gutenberg_kg.image_gen`.
+- **Discovery.** `discover_image_endpoint` and `DEFAULT_IMAGE_ENDPOINTS` probe
+  `IMAGE_ENDPOINT`, `GUTENKG_IMAGE_ENDPOINT`, then `localhost:8090` and
+  `:8091`, on `/health` and then `/v1/models`.
+- **Backend selection.** `resolve_image_config` chooses, in order: the named
+  backend or endpoint, the environment, a discovered server, in-process FLUX
+  with a warning, or `NoImageBackendError` listing the fixes.
+- **`imagewright generate PROMPT`** writes one PNG and prints its path.
+- **Extras.** `flux` (`mflux>=0.24.0`) and `openai` (`openai>=1.30.0`). A
+  backend whose extra is missing raises `MissingExtraError` naming the
+  `pip install` command. Core dependencies gain `httpx` and `pillow`.
 - **The repository.** Package layout, CI, pre-commit hooks and a command line
   that reports its version. No image generation yet.

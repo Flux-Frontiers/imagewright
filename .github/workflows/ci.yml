@@ -125,6 +125,7 @@ jobs:
     #   1. every console-script entry point loads.
     #   2. the installed command runs and reports the version that was built.
     #   3. every packaged submodule imports.
+    #   4. with no server and no extras, `generate` fails and names the fix.
     steps:
       - uses: actions/checkout@v7
 
@@ -204,3 +205,20 @@ jobs:
                        "from the installed wheel: " + ", ".join(failed))
           print(f"all {len(names)} packaged submodules import from a clean install")
           PY
+
+      - name: Generate with no backend names the fix
+        run: |
+          cd /tmp
+          check() {  # check EXPECTED ARGS...: must exit non-zero and print EXPECTED
+            expected="$1"; shift
+            if /tmp/smoke/bin/imagewright generate x "$@" > /tmp/gen.out 2>&1; then
+              cat /tmp/gen.out; echo "generate $* succeeded with no backend"; exit 1
+            fi
+            cat /tmp/gen.out
+            grep -qF "$expected" /tmp/gen.out \
+              || { echo "generate $* did not name: $expected"; exit 1; }
+          }
+          check 'pip install "imagewright[flux]"'
+          check 'IMAGE_ENDPOINT'
+          check 'pip install "imagewright[flux]"' --backend mflux-local
+          check 'pip install "imagewright[openai]"' --backend openai

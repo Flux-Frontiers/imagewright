@@ -15,6 +15,7 @@
 # ----------------------
 #   poetry install                      core runtime only
 #   poetry install --with dev           + pytest, ruff, ty, pre-commit
+#   poetry install -E flux -E openai    + in-process FLUX, OpenAI backend
 #
 # Run tests
 # ---------
@@ -50,11 +51,20 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
 ]
 requires-python = ">=3.12,<3.14"
-# Only what src/ imports today. The client's httpx and pillow, and the `flux`,
-# `sdxl` and `mcp` extras, arrive with the code that needs them.
+# Only what src/ imports today. The `sdxl` and `mcp` extras arrive with the
+# code that needs them.
 dependencies = [
     "click>=8.1.0,<9",
+    "httpx>=0.27.0",
+    "pillow>=13.0.0",
 ]
+
+[project.optional-dependencies]
+# In-process FLUX.2 Klein (Apple Silicon). 0.24.0 has the
+# mflux.models.flux2.variants.txt2img.flux2_klein import path the client uses.
+flux = ["mflux>=0.24.0"]
+# OpenAI gpt-image-1 / DALL-E.
+openai = ["openai>=1.30.0"]
 
 [project.urls]
 Homepage   = "https://github.com/Flux-Frontiers/imagewright"
