@@ -2,7 +2,10 @@
 
 [![Python](https://img.shields.io/badge/python-3.12%20%7C%203.13-blue.svg)](https://www.python.org/)
 [![License: Elastic-2.0](https://img.shields.io/badge/License-Elastic%202.0-blue.svg)](https://www.elastic.co/licensing/elastic-license)
-[![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)](CHANGELOG.md)
+[![PyPI](https://img.shields.io/pypi/v/imagewright.svg)](https://pypi.org/project/imagewright/)
+[![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)](https://github.com/Flux-Frontiers/imagewright/releases)
+[![CI](https://github.com/Flux-Frontiers/imagewright/actions/workflows/ci.yml/badge.svg)](https://github.com/Flux-Frontiers/imagewright/actions/workflows/ci.yml)
+[![Docs](https://github.com/Flux-Frontiers/imagewright/actions/workflows/docs.yml/badge.svg)](https://flux-frontiers.github.io/imagewright/)
 
 **imagewright** -- image generation over one HTTP contract.
 
@@ -18,10 +21,14 @@ It holds the image code that grew inside
 [KG_utils](https://github.com/Flux-Frontiers/kg_utils). That code never
 depended on a knowledge graph, and neither does this package.
 
+**Documentation:** [flux-frontiers.github.io/imagewright](https://flux-frontiers.github.io/imagewright/)
+covers installation, choosing a backend, the servers, the HTTP contract, the
+MCP server, every command and the Python API.
+
 ## Status
 
-Pre-alpha and private. The client, both image servers and the MCP tool
-work.
+Alpha (0.1.0). The client, the in-process and OpenAI backends, both image
+servers and the MCP tool work.
 
 | Piece | State | What it does |
 |---|---|---|
@@ -35,9 +42,8 @@ work.
 
 ## Install
 
-The core install talks to an image server. Extras add the other backends.
-imagewright is not on PyPI yet; until it is, install from a clone or a built
-wheel with the same extras.
+imagewright is on PyPI and needs Python 3.12 or 3.13. The core install
+talks to an image server. Extras add the other backends and the servers.
 
 ```bash
 pip install imagewright                # client for a running image server
@@ -238,7 +244,7 @@ To confirm the install, run the command line:
 ## License
 
 [Elastic License 2.0](https://www.elastic.co/licensing/elastic-license) -- see
-[LICENSE](LICENSE).
+[LICENSE](https://github.com/Flux-Frontiers/imagewright/blob/main/LICENSE).
 
 The models are downloaded at run time and carry their own licenses.
 FLUX.2 Klein 4B is Apache-2.0 and SDXL is OpenRAIL++. FLUX.2 Klein 9B is
@@ -246,4 +252,22 @@ licensed for non-commercial use only.
 
 ## Citation
 
-See [CITATION.cff](CITATION.cff).
+If you use imagewright in your research or project, please cite it:
+
+> Suchanek, E. G. (2026). *imagewright: Image Generation Over One HTTP Contract* (Version 0.1.0) [Software]. Flux-Frontiers. https://github.com/Flux-Frontiers/imagewright
+
+```bibtex
+@software{suchanek_imagewright,
+  author    = {Suchanek, Eric G.},
+  title     = {{imagewright}: Image Generation Over One HTTP Contract},
+  version   = {0.1.0},
+  year      = {2026},
+  publisher = {Flux-Frontiers},
+  url       = {https://github.com/Flux-Frontiers/imagewright},
+}
+```
+
+A Zenodo DOI is added here and in [CITATION.cff](https://github.com/Flux-Frontiers/imagewright/blob/main/CITATION.cff)
+after the first release is archived. See the
+[changelog](https://github.com/Flux-Frontiers/imagewright/blob/main/CHANGELOG.md)
+for release history.

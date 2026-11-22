@@ -45,7 +45,7 @@ authors = [
 ]
 keywords = ["image-generation", "flux", "sdxl", "mflux", "diffusers", "mcp"]
 classifiers = [
-    "Development Status :: 2 - Pre-Alpha",
+    "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "Topic :: Multimedia :: Graphics",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
@@ -88,6 +88,7 @@ Homepage   = "https://github.com/Flux-Frontiers/imagewright"
 Repository = "https://github.com/Flux-Frontiers/imagewright"
 Issues     = "https://github.com/Flux-Frontiers/imagewright/issues"
 Changelog  = "https://github.com/Flux-Frontiers/imagewright/blob/main/CHANGELOG.md"
+Documentation = "https://flux-frontiers.github.io/imagewright/"
 
 [project.scripts]
 imagewright = "imagewright.cli:cli"

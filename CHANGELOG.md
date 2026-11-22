@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Documentation site** at
+  [flux-frontiers.github.io/imagewright](https://flux-frontiers.github.io/imagewright/):
+  getting started, choosing a backend, the servers, the HTTP contract, the MCP
+  server, the CLI reference and an API reference. A test fails the suite when
+  a command, MCP tool or public module has no page.
+- **Release workflow.** A `v*` tag builds the wheel and sdist, creates the
+  GitHub Release and publishes to PyPI by trusted publishing.
 - **`imagewright-mcp`**, an MCP server over stdio with one `generate` tool
   (`prompt`, `size`, `seed`, `steps`, bounded). It chooses its backend with
   `resolve_image_config` on the first call and keeps it. Needs the new `mcp`
@@ -56,5 +63,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Extras.** `flux` (`mflux>=0.24.0`) and `openai` (`openai>=1.30.0`). A
   backend whose extra is missing raises `MissingExtraError` naming the
   `pip install` command. Core dependencies gain `httpx` and `pillow`.
-- **The repository.** Package layout, CI, pre-commit hooks and a command line
-  that reports its version. No image generation yet.
+- **The repository.** Package layout, CI, pre-commit hooks and
+  `imagewright --version`.
