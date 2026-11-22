@@ -62,7 +62,7 @@ def generate(
         warnings.simplefilter("always")
         try:
             config = resolve_image_config(backend, endpoint)
-        except NoImageBackendError as exc:
+        except (NoImageBackendError, ValueError) as exc:
             raise click.ClickException(str(exc)) from exc
     for w in caught:
         click.echo(f"warning: {w.message}", err=True)

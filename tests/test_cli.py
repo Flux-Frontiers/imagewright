@@ -109,3 +109,16 @@ def test_generate_rejects_a_bad_size():
     result = CliRunner().invoke(cli, ["generate", "x", "--size", "big"])
     assert result.exit_code == 2
     assert "'big' is not WIDTHxHEIGHT" in result.output
+
+
+@pytest.mark.parametrize(
+    ("var", "value"), [("IMAGE_BACKEND", "diffusers"), ("IMAGE_STEPS", "many")]
+)
+def test_generate_bad_environment_is_a_clean_error(
+    var: str, value: str, monkeypatch: pytest.MonkeyPatch
+):
+    monkeypatch.setenv(var, value)
+    result = CliRunner().invoke(cli, ["generate", "x"])
+    assert result.exit_code == 1
+    assert result.exception is None or isinstance(result.exception, SystemExit)
+    assert result.output.startswith("Error: ")

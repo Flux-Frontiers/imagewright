@@ -79,10 +79,11 @@ def resolve_image_config(
     """Choose the image backend, in a fixed order, and return its configuration.
 
     1. *backend* and *endpoint* as given. An endpoint with no backend means
-       ``mflux-serve``.
+       ``mflux-serve``, whatever ``IMAGE_BACKEND`` says.
     2. ``IMAGE_BACKEND`` and ``IMAGE_ENDPOINT`` (``GUTENKG_IMAGE_ENDPOINT`` as a
-       fallback) from the environment, the same way.
-    3. A server that answers :func:`discover_image_endpoint`.
+       fallback) from the environment, the same way. A configured endpoint is
+       used without probing it.
+    3. A server that answers on :data:`DEFAULT_IMAGE_ENDPOINTS`.
     4. In-process FLUX (``mflux-local``) if mflux is installed, after a warning
        that no server was found and the model is loading in process.
     5. Otherwise :class:`NoImageBackendError`, whose message lists the fixes.
@@ -96,12 +97,15 @@ def resolve_image_config(
     :param endpoint: Image server base URL for ``mflux-serve``.
     :param timeout: Per-request timeout for discovery probes, in seconds.
     :returns: The configuration to pass to ``ImageSynthesizer``.
-    :raises ValueError: When *backend* or ``IMAGE_BACKEND`` is not a known backend.
+    :raises ValueError: When *backend* or ``IMAGE_BACKEND`` is not a known backend,
+        or ``IMAGE_STEPS`` is not an integer.
     :raises NoImageBackendError: When nothing is named, found or installed.
     """
     base = image_config_from_env()
-    env_backend = os.environ.get("IMAGE_BACKEND") or None
-    chosen_backend = backend or env_backend
+    if backend is None and endpoint:
+        return replace(base, backend=ImageBackend.MFLUX_SERVE, server_url=endpoint)
+
+    chosen_backend = backend or os.environ.get("IMAGE_BACKEND") or None
     chosen_endpoint = endpoint or env_image_endpoint()
 
     if chosen_backend is not None:

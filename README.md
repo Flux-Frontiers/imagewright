@@ -36,6 +36,8 @@ next.
 ## Install
 
 The core install talks to an image server. Extras add the other backends.
+imagewright is not on PyPI yet; until it is, install from a clone or a built
+wheel with the same extras.
 
 ```bash
 pip install imagewright              # client for a running image server
@@ -67,11 +69,12 @@ and prints its path. Options:
 ### How the backend is chosen
 
 1. `--backend` and `--endpoint`. An endpoint with no backend means
-   `mflux-serve`.
-2. `IMAGE_BACKEND` and `IMAGE_ENDPOINT` from the environment.
-3. A server that answers on `IMAGE_ENDPOINT`, `GUTENKG_IMAGE_ENDPOINT`,
-   `http://localhost:8090` or `http://localhost:8091`. A server answers if
-   `/health` or `/v1/models` returns 200.
+   `mflux-serve`, whatever `IMAGE_BACKEND` says.
+2. `IMAGE_BACKEND` and `IMAGE_ENDPOINT` (or `GUTENKG_IMAGE_ENDPOINT`) from
+   the environment. A configured endpoint is used without probing it.
+3. A server that answers on `http://localhost:8090` or
+   `http://localhost:8091`. A server answers if `/health` or `/v1/models`
+   returns 200.
 4. FLUX.2 Klein in process, if the `flux` extra is installed. A warning says
    that no server was found and the model is loading in process.
 5. Otherwise the command fails with a list of the ways to fix it.
@@ -104,7 +107,7 @@ image.save("lighthouse.png")
 | `ImageConfig`, `ImageBackend` | The backend and its settings |
 | `image_config_from_env()` | An `ImageConfig` from the environment variables above |
 | `resolve_image_config(backend=None, endpoint=None)` | Chooses the backend in the order above |
-| `discover_image_endpoint(candidates=None)` | The first image server that answers, or `None` |
+| `discover_image_endpoint(candidates=None)` | The first image server that answers, or `None`. By default it probes `IMAGE_ENDPOINT` and `GUTENKG_IMAGE_ENDPOINT` (when set) before the two localhost ports |
 | `DEFAULT_IMAGE_ENDPOINTS` | `http://localhost:8090`, `http://localhost:8091` |
 | `NoImageBackendError` | Raised when no backend is available; the message lists the fixes |
 | `MissingExtraError` | Raised when a backend's extra is not installed; a subclass of `ImportError` |

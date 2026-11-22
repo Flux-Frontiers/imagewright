@@ -117,7 +117,16 @@ def contract_server() -> Iterator[ContractServer]:
         def do_GET(self) -> None:
             state.requests.append(("GET", self.path, None))
             if self.path == "/health":
-                self._reply(state.health_status, {"status": "ok", "model_loaded": False})
+                self._reply(
+                    state.health_status,
+                    {
+                        "status": "ok",
+                        "backend": "flux",
+                        "model": "flux2-klein-4b",
+                        "loaded": False,
+                        "idle_unload_s": 0,
+                    },
+                )
             elif self.path == "/v1/models":
                 self._reply(state.models_status, {"data": [{"id": "flux2-klein-4b"}]})
             elif self.path == "/image.png":  # a hosted image, as an OpenAI URL reply points to

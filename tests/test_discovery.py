@@ -89,6 +89,16 @@ def test_rung_a_explicit_endpoint_means_serve(monkeypatch: pytest.MonkeyPatch) -
     assert cfg.server_url == "http://arg-box:8090"
 
 
+@pytest.mark.parametrize("env_backend", ["openai", "mflux-local"])
+def test_rung_a_explicit_endpoint_beats_env_backend(
+    env_backend: str, fake_flux: FakeFluxStack, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setenv("IMAGE_BACKEND", env_backend)
+    cfg = resolve_image_config(endpoint="http://arg-box:8090")
+    assert cfg.backend is ImageBackend.MFLUX_SERVE
+    assert cfg.server_url == "http://arg-box:8090"
+
+
 def test_rung_a_explicit_backend_beats_env(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("IMAGE_BACKEND", "openai")
     assert resolve_image_config(ImageBackend.MFLUX_LOCAL).backend is ImageBackend.MFLUX_LOCAL
