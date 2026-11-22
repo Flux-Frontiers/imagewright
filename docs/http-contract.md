@@ -55,12 +55,14 @@ Renders one image. The request body is JSON:
 | `seed` | integer or null | random | random | Seed for a reproducible image |
 | `num_inference_steps` | integer or null | `IMAGE_STEPS`, else 4 | the Lightning variant's steps | FLUX uses it when above 0. SDXL uses it only for a model that is not a known Lightning variant |
 | `response_format` | string | `"b64_json"` | `"b64_json"` | `"filepath"` writes the PNG on the server; any other value returns it inline |
-| `negative_prompt` | string | not accepted | `"blurry, bad quality, distorted"` | What to steer away from. SDXL only |
+| `negative_prompt` | string | ignored | `"blurry, bad quality, distorted"` | What to steer away from. SDXL only |
 | `model` | string | `"flux2-klein-4b"` | `"sdxl_lightning_4"` | Accepted and ignored |
 | `n` | integer | `1` | `1` | Accepted and ignored; the server returns one image |
 | `quality` | string or null | null | null | Accepted and ignored |
 
 A request with no `prompt` gets a 422 response from FastAPI's validation.
+Fields the server does not know, such as `negative_prompt` on the FLUX
+server, are ignored.
 
 ### Response formats
 
@@ -68,15 +70,17 @@ With `response_format` `"b64_json"`, or any value other than `"filepath"`,
 the response carries the PNG as base64:
 
 ```json
-{"created": 1795392000, "data": [{"b64_json": "iVBORw0KGgo..."}]}
+{"created": 1795385626, "data": [{"b64_json": "iVBORw0KGgoAAAAN..."}]}
 ```
 
+The base64 string is truncated here; a real reply carries the whole PNG.
+
 With `"filepath"`, the server writes the PNG under `IMAGE_OUTPUT_DIR` with a
-random name and returns its absolute path. On Linux with the default output
-directory, for example:
+random name and returns its absolute path. With
+`IMAGE_OUTPUT_DIR=/tmp/imagewright_images`, for example:
 
 ```json
-{"created": 1795392000, "data": [{"filepath": "/tmp/imagewright_images/<32 hex characters>.png"}]}
+{"created": 1795385632, "data": [{"filepath": "/tmp/imagewright_images/e9a6f43039ee495db907a981c616581c.png"}]}
 ```
 
 `created` is the Unix time of the reply. A `filepath` is a path on the
@@ -87,5 +91,7 @@ server's file system.
 
 `ImageSynthesizer` with the `mflux-serve` backend posts `prompt`, `n` (1),
 `size`, `num_inference_steps`, `response_format` (`"b64_json"`) and, when
-given, `seed`. It reads `data[0].b64_json` from the reply. It waits up to
-5 seconds to connect and 300 seconds for the image.
+given, `seed`. It sends no `model` field, so the server's own model renders,
+whatever `IMAGE_MODEL` or the `model` argument says. It reads
+`data[0].b64_json` from the reply, and waits up to 5 seconds to connect and
+300 seconds for the image.

@@ -79,7 +79,7 @@ Error: unknown image backend 'bogus'; choose one of: mflux-local, mflux-serve, o
 |---|---|---|
 | `IMAGE_BACKEND` | `mflux-serve`, `mflux-local` or `openai` | chosen as above |
 | `IMAGE_ENDPOINT` | Image server base URL | none. Fallback: `GUTENKG_IMAGE_ENDPOINT` |
-| `IMAGE_MODEL` | Model id | `flux2-klein-4b` for `mflux-serve`, `mlx-community/flux2-klein-4b-4bit` for `mflux-local`, `gpt-image-1` for `openai`. Fallback: `GUTENKG_IMAGE_MODEL` |
+| `IMAGE_MODEL` | Model id for `mflux-local` (a Hugging Face repo) or `openai`. `mflux-serve` does not send it; the server's model renders | `mlx-community/flux2-klein-4b-4bit` for `mflux-local`, `gpt-image-1` for `openai`. Fallback: `GUTENKG_IMAGE_MODEL` |
 | `IMAGE_API_KEY` | OpenAI API key | none. Fallback: `OPENAI_API_KEY` |
 | `IMAGE_STEPS` | Inference steps for the FLUX backends | `4` |
 

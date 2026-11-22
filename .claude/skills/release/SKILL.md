@@ -50,9 +50,13 @@ a floor only when the code needs something new (`kgrag_priv/docs/
 FLEET_STANDARDS.md`, "Fleet floors mean needs, locks mean tested").
 
 ```bash
-env -u VIRTUAL_ENV -u POETRY_ACTIVE poetry lock
+env -u VIRTUAL_ENV -u POETRY_ACTIVE poetry update
 env -u VIRTUAL_ENV -u POETRY_ACTIVE poetry install --with dev,docs --sync
 ```
+
+`poetry update` moves every package to the newest version its constraint
+allows; a plain `poetry lock` keeps the versions already locked. Read the
+lock diff and name what moved in the changelog.
 
 ## Step 3 -- Promote the changelog
 
@@ -84,6 +88,7 @@ head -1 release-notes.md
 - [ ] `CITATION.cff` `date-released:`, set to the release date. Add the
       field if it is missing.
 - [ ] `README.md` version badge
+- [ ] `README.md` status line: `Alpha (X.Y.Z)`
 - [ ] `README.md` APA citation: `(Version X.Y.Z) [Software]`
 - [ ] `README.md` BibTeX: `version   = {X.Y.Z},` and `year`
 - [ ] `docs/getting-started.md` and `docs/cli.md`: the
@@ -215,17 +220,18 @@ discovery finds the server on 8090 instead.
     child only a short list of safe variables, and `IMAGE_ENDPOINT` would not
     reach it. Require `False` and one `image` item.
 
-7. Repeat step 6 with `IMAGE_BACKEND=mflux-local` and no `IMAGE_ENDPOINT`,
+7. Stop the test server (Ctrl-C) and confirm it shuts down without a
+   traceback. Stop it before the next two steps, so two FLUX models are
+   never loaded at once.
+
+8. Repeat step 6 with `IMAGE_BACKEND=mflux-local` and no `IMAGE_ENDPOINT`,
    so the tool loads FLUX in its own process.
 
-8. Run the in-process CLI path:
+9. Run the in-process CLI path:
 
     ```bash
     .venv/bin/imagewright generate "a lighthouse" --backend mflux-local -o /tmp/iw-live-2.png
     ```
-
-9. Stop the test server (Ctrl-C) and confirm it shuts down without a
-   traceback.
 
 10. Run the SDXL server once against real diffusers, on a machine where
     `pip install "imagewright[serve,sdxl]"` works (CUDA, MPS or CPU):
@@ -330,7 +336,17 @@ command (`~/.claude/commands/release.md`). It needs `$ZENODO_TOKEN` with
 After the first GitHub Release is published and Zenodo has archived it:
 
 1. Get the concept DOI from the Zenodo API. Never copy it from the record
-   page's "Cite this version" box, which offers the version DOI.
+   page's "Cite this version" box, which offers the version DOI. To find a
+   record id the first time, start from the repository's numeric GitHub id,
+   which Zenodo derives rather than a person typing it:
+
+    ```bash
+    gh api repos/Flux-Frontiers/imagewright -q .id
+    curl -sI "https://zenodo.org/badge/latestdoi/<that id>" | rg -i '^location'
+    ```
+
+    The redirect names the latest version's DOI; its last number is a
+    record id. Then list every version and read `conceptdoi`:
 
     ```bash
     curl -sL "https://zenodo.org/api/records?q=conceptrecid:<recid>&all_versions=1" \

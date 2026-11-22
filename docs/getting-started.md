@@ -91,7 +91,7 @@ returns a base64-encoded PNG. The arguments:
 | `aspect_ratio` | `"3:2"` | `1:1`, `3:2`, `2:3`, `16:9`, `9:16`, `4:3` or `3:4` |
 | `seed` | random | Seed for a reproducible image |
 | `steps` | the config's `steps` (4) | Inference steps; the OpenAI backend ignores it |
-| `model` | the config's model | Model id for this call only |
+| `model` | the config's model | Model id for this call only; `mflux-serve` ignores it |
 | `size` | none | `"WIDTHxHEIGHT"`. When it parses, it overrides `aspect_ratio` on the FLUX backends; the OpenAI backend ignores it |
 
 The FLUX backends map an aspect ratio to these sizes:

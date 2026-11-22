@@ -13,6 +13,7 @@ feature the site does not admit exists.
 from __future__ import annotations
 
 import asyncio
+import importlib.metadata
 from pathlib import Path
 
 import click
@@ -71,7 +72,14 @@ def test_every_command_appears_on_the_site(site_text: str) -> None:
 
 
 def test_every_console_script_appears_on_the_site(site_text: str) -> None:
-    assert "imagewright-mcp" in site_text
+    scripts = [
+        ep.name
+        for ep in importlib.metadata.distribution("imagewright").entry_points
+        if ep.group == "console_scripts"
+    ]
+    assert len(scripts) >= 2
+    missing = [name for name in scripts if f"`{name}`" not in site_text]
+    assert not missing, f"console scripts not documented in docs/: {', '.join(missing)}"
 
 
 def test_every_mcp_tool_appears_on_the_site(site_text: str) -> None:
