@@ -1,0 +1,25 @@
+cff-version: "1.2.0"
+message: "If you use this software, please cite it using the metadata below."
+type: software
+title: "imagewright: Image Generation Over One HTTP Contract"
+abstract: >
+  imagewright generates images through one HTTP contract,
+  /v1/images/generations. It is planned to hold a client, local servers for
+  FLUX.2 Klein and SDXL-Lightning that answer the contract, an in-process
+  mode that needs no server, and an MCP tool. It depends on no knowledge
+  graph package.
+authors:
+  - family-names: Suchanek
+    given-names: "Eric G., PhD"
+    orcid: "https://orcid.org/0009-0009-0891-1507"
+    email: suchanek@flux-frontiers.com
+    affiliation: "Flux-Frontiers"
+version: "0.1.0"
+license-url: "https://www.elastic.co/licensing/elastic-license"
+repository-code: "https://github.com/Flux-Frontiers/imagewright"
+url: "https://github.com/Flux-Frontiers/imagewright"
+keywords:
+  - image-generation
+  - flux
+  - sdxl
+  - mcp

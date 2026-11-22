@@ -1,0 +1,125 @@
+# pyproject.toml -- imagewright package configuration (PEP 621)
+#
+# Image generation for the fleet: an HTTP client, local image servers and an
+# MCP tool. Nothing here depends on a knowledge graph.
+#
+# Author: Eric G. Suchanek, PhD
+#
+# Build system : Poetry 2.x with PEP 621 [project] table
+#
+# Extras are user-facing features; dev tooling is a Poetry group, so it never
+# ships in the wheel and cannot be pip-installed. See FLEET_STANDARDS.md in
+# kgrag_priv.
+#
+# Quick install (poetry)
+# ----------------------
+#   poetry install                      core runtime only
+#   poetry install --with dev           + pytest, ruff, ty, pre-commit
+#
+# Run tests
+# ---------
+#   pytest
+
+[build-system]
+requires = ["poetry-core>=2.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+packages = [{ include = "imagewright", from = "src" }]
+
+# ---------------------------------------------------------------------------
+# PEP 621 project metadata
+# ---------------------------------------------------------------------------
+[project]
+name = "imagewright"
+version = "0.1.0"
+description = "Image generation over one HTTP contract: a client, local FLUX and SDXL servers, and an MCP tool"
+readme = "README.md"
+license = "Elastic-2.0"
+authors = [
+    { name = "Eric G. Suchanek, PhD", email = "suchanek@flux-frontiers.com" }
+]
+keywords = ["image-generation", "flux", "sdxl", "mflux", "diffusers", "mcp"]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "Topic :: Multimedia :: Graphics",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+requires-python = ">=3.12,<3.14"
+# Only what src/ imports today. The client's httpx and pillow, and the `flux`,
+# `sdxl` and `mcp` extras, arrive with the code that needs them.
+dependencies = [
+    "click>=8.1.0,<9",
+]
+
+[project.urls]
+Homepage   = "https://github.com/Flux-Frontiers/imagewright"
+Repository = "https://github.com/Flux-Frontiers/imagewright"
+Issues     = "https://github.com/Flux-Frontiers/imagewright/issues"
+Changelog  = "https://github.com/Flux-Frontiers/imagewright/blob/main/CHANGELOG.md"
+
+[project.scripts]
+imagewright = "imagewright.cli:cli"
+
+# ---------------------------------------------------------------------------
+# Dev tooling (Poetry group, not a PEP 621 extra)
+# ---------------------------------------------------------------------------
+# `optional = true` keeps it out of a bare `poetry install`.
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.dev.dependencies]
+detect-secrets = ">=1.5.0"
+pre-commit = ">=4.5.1"
+# >=9.0.3 is a security floor, not a preference: GHSA-6w46-j5rx-g56g.
+pytest = ">=9.0.3"
+pytest-cov = ">=5.0.0"
+# Capped below 0.16 to match the rest of the fleet and the rev pinned in
+# .pre-commit-config.yaml.
+ruff = ">=0.15,<0.16"
+# 0.0.97 renamed `unresolved-import` to `import-not-found`.
+ty = ">=0.0.97"
+
+# ---------------------------------------------------------------------------
+# Tool configuration
+# ---------------------------------------------------------------------------
+[tool.ruff]
+line-length    = 100
+target-version = "py312"
+# Keep prose docs out of ruff 0.16's Markdown code-block formatting.
+exclude = [".claude", "*.md"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B023", "BLE001", "PLC0415"]
+ignore = ["E501"]
+
+[tool.ty.environment]
+python-version = "3.12"
+root = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts   = "-v --tb=short --strict-markers"
+
+[tool.coverage.run]
+source = ["imagewright"]
+
+[tool.coverage.report]
+# A floor against regression, not a target. Checked by `pytest --cov` in CI
+# and in the pre-commit pytest hook; raise it as coverage grows.
+fail_under = 90
+
+# ---------------------------------------------------------------------------
+# KG index configuration (dockg / pycodekg are global tools)
+# ---------------------------------------------------------------------------
+[tool.pycodekg]
+# Tests skew architectural metrics (fan-in, public API surface, docstring coverage).
+exclude = ["tests"]
+include = ["src"]
+
+[tool.dockg]
+exclude = ["__pycache__", "dist", "src", "tests"]
