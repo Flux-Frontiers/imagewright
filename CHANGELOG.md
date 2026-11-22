@@ -9,6 +9,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Image servers.** `imagewright serve` runs the FLUX.2 Klein server
+  (`imagewright.flux_server`, port 8090) or, with `--backend sdxl`, the
+  SDXL-Lightning server (`imagewright.sdxl_server`, port 8091). Both are
+  ports of gutenberg_kg's `serve/image_server.py` and `serve/sdxl_server.py`
+  and answer the same routes, request fields and response bodies. The FLUX
+  server keeps one `ImageSynthesizer` loaded, renders one image at a time, and
+  honors `IMAGE_PRELOAD` and `IMAGE_IDLE_UNLOAD_S`. The SDXL server also
+  renders one image at a time; gutenberg_kg's let two requests share the
+  pipeline. Each module builds its app
+  with `create_app()` and imports nothing from fastapi or the model stacks at
+  module scope.
+- **The servers bind `127.0.0.1` by default**, not `0.0.0.0` as gutenberg_kg's
+  do; they have no authentication. `--host`, `MFLUX_SERVER_HOST` or
+  `SDXL_SERVER_HOST` override it.
+- **Extras** `serve` (fastapi, uvicorn, pydantic) and `sdxl` (torch,
+  diffusers, transformers, accelerate, safetensors, huggingface_hub). `serve`
+  without them exits with the `pip install` command to run.
+- **`ImageSynthesizer.load_model()`** loads the in-process model ahead of the
+  first render; the FLUX server uses it to preload.
+- `NoImageBackendError` names `imagewright serve`.
 - **The client.** `ImageSynthesizer`, `ImageConfig`, `ImageBackend` and
   `image_config_from_env`, copied from `kg_utils.synthesis` with the same
   names and signatures. Backends: `mflux-serve` (HTTP), `mflux-local`

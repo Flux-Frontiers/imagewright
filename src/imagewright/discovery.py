@@ -21,8 +21,8 @@ DEFAULT_IMAGE_ENDPOINTS: tuple[str, ...] = (
 
 _FIXES = """\
 No image backend is available. Any one of these fixes it:
-  - start an image server on localhost:8090 or localhost:8091
-    (it is found automatically);
+  - start an image server with `imagewright serve` (localhost:8090), or any
+    server on localhost:8090 or localhost:8091 (it is found automatically);
   - point at a running server: set IMAGE_ENDPOINT=http://HOST:PORT
     or pass --endpoint;
   - render in process on Apple Silicon: pip install "imagewright[flux]";

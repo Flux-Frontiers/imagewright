@@ -1,5 +1,6 @@
 """The ``imagewright`` command line."""
 
+import os
 import warnings
 from datetime import datetime
 from pathlib import Path
@@ -78,3 +79,57 @@ def generate(
     path = output or Path(f"imagewright-{datetime.now():%Y%m%d-%H%M%S}.png")
     image.save(path, format="PNG")
     click.echo(str(path))
+
+
+@cli.command()
+@click.option(
+    "--backend",
+    type=click.Choice(["flux", "sdxl"]),
+    default="flux",
+    show_default=True,
+    help="flux: FLUX.2 Klein through mflux (Apple Silicon). sdxl: SDXL-Lightning "
+    "through diffusers (CUDA, MPS or CPU).",
+)
+@click.option(
+    "--host",
+    help="Address to bind. Default: MFLUX_SERVER_HOST (SDXL_SERVER_HOST for sdxl), "
+    "else 127.0.0.1. The server has no authentication; bind 0.0.0.0 only on a "
+    "network you trust.",
+)
+@click.option(
+    "--port",
+    type=click.IntRange(0, 65535),
+    help="Port to bind. Default: MFLUX_SERVER_PORT (SDXL_SERVER_PORT for sdxl), "
+    "else 8090 (8091 for sdxl).",
+)
+def serve(backend: str, host: str | None, port: int | None) -> None:
+    """Run an image server that answers /v1/images/generations.
+
+    The FLUX server needs the serve and flux extras; the SDXL server needs serve
+    and sdxl.
+
+    \f
+    :param backend: ``flux`` or ``sdxl``.
+    :param host: Bind address, or None for the environment or 127.0.0.1.
+    :param port: Bind port, or None for the environment or the backend's default.
+    """
+    if backend == "flux":
+        from imagewright import flux_server as server  # noqa: PLC0415 - only `serve` needs it
+
+        env_prefix = "MFLUX_SERVER"
+    else:
+        from imagewright import sdxl_server as server  # noqa: PLC0415 - only `serve` needs it
+
+        env_prefix = "SDXL_SERVER"
+    try:
+        server.require_extras()
+    except MissingExtraError as exc:
+        raise click.ClickException(str(exc)) from exc
+
+    host = host or os.environ.get(f"{env_prefix}_HOST") or "127.0.0.1"
+    if port is None:
+        port = int(os.environ.get(f"{env_prefix}_PORT") or server.DEFAULT_PORT)
+
+    import uvicorn  # noqa: PLC0415 - the `serve` extra
+
+    uvicorn.run(server.create_app(), host=host, port=port)

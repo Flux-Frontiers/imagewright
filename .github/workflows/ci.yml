@@ -126,6 +126,7 @@ jobs:
     #   2. the installed command runs and reports the version that was built.
     #   3. every packaged submodule imports.
     #   4. with no server and no extras, `generate` fails and names the fix.
+    #   5. with no extras, `serve` fails and names its pip command.
     steps:
       - uses: actions/checkout@v7
 
@@ -222,3 +223,20 @@ jobs:
           check 'IMAGE_ENDPOINT'
           check 'pip install "imagewright[flux]"' --backend mflux-local
           check 'pip install "imagewright[openai]"' --backend openai
+
+      - name: Serve with no extras names the pip command
+        run: |
+          cd /tmp
+          check() {  # check EXPECTED ARGS...: must exit non-zero and print EXPECTED
+            expected="$1"; shift
+            if /tmp/smoke/bin/imagewright serve "$@" > /tmp/serve.out 2>&1; then
+              cat /tmp/serve.out; echo "serve $* succeeded with no extras"; exit 1
+            fi
+            cat /tmp/serve.out
+            grep -qF "$expected" /tmp/serve.out \
+              || { echo "serve $* did not name: $expected"; exit 1; }
+            ! grep -q "Traceback" /tmp/serve.out \
+              || { echo "serve $* raised instead of naming the fix"; exit 1; }
+          }
+          check 'pip install "imagewright[serve,flux]"'
+          check 'pip install "imagewright[serve,sdxl]"' --backend sdxl

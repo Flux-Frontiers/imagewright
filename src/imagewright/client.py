@@ -149,6 +149,16 @@ class ImageSynthesizer:
         self._mflux_model_name = model_name
         return self._mflux_model
 
+    def load_model(self) -> None:
+        """Load the in-process Flux2Klein model now instead of on the first render.
+
+        An image server calls this to preload. A no-op when the configured model
+        is already loaded.
+
+        :raises MissingExtraError: When the ``flux`` extra is not installed.
+        """
+        self._load_mflux(self._cfg.resolved_model())
+
     @property
     def model_loaded(self) -> bool:
         """``True`` while an in-process Flux2Klein model is held in memory."""

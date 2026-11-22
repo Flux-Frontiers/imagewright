@@ -18,10 +18,16 @@ Fleet-wide rules (dependency conventions, hooks, releases) are in
 ## Development workflow
 
 ```bash
-env -u VIRTUAL_ENV -u POETRY_ACTIVE poetry install --with dev --all-extras --sync
+env -u VIRTUAL_ENV -u POETRY_ACTIVE poetry install --with dev --sync
 env -u VIRTUAL_ENV -u POETRY_ACTIVE .venv/bin/pytest --cov
 env -u VIRTUAL_ENV -u POETRY_ACTIVE .venv/bin/pre-commit run --all-files
 ```
+
+The tests need no extras: the dev group carries fastapi, uvicorn and
+pydantic, and the tests fake the model stacks, so CI runs them on a plain
+`--with dev` install. Install the `flux` and `sdxl` extras only for live
+runs against a real model, for example
+`poetry install --with dev -E serve -E flux`.
 
 Always unset `VIRTUAL_ENV` for repo commands; an inherited venv from another
 fleet repo hijacks `poetry run` silently. Run pre-commit on all files before
@@ -34,9 +40,10 @@ floor.
   `/v1/images/generations`, with the request fields and both response formats
   `gutenberg_kg`'s servers have today. A change to it is a breaking change.
 - Extras are user-facing features: `flux` (mflux, Apple Silicon), `openai`,
-  `sdxl` (torch and diffusers) and `mcp`. A core install must import and run
-  the client without any of them, and a command that needs an extra must name
-  it in its error (`MissingExtraError`), not raise a bare ImportError.
+  `serve` (fastapi, uvicorn, pydantic), `sdxl` (torch and diffusers) and
+  `mcp`. A core install must import and run the client without any of them,
+  and a command that needs an extra must name it in its error
+  (`MissingExtraError`), not raise a bare ImportError.
 - Never import a model stack (mflux, mlx, openai, torch, diffusers) at
   module scope outside the module that owns it.
 - No test may download a model or call a paid API. Fake the model object, and

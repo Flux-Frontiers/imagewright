@@ -16,6 +16,8 @@
 #   poetry install                      core runtime only
 #   poetry install --with dev           + pytest, ruff, ty, pre-commit
 #   poetry install -E flux -E openai    + in-process FLUX, OpenAI backend
+#   poetry install -E serve -E flux     + `imagewright serve` (FLUX server)
+#   poetry install -E serve -E sdxl     + `imagewright serve --backend sdxl`
 #
 # Run tests
 # ---------
@@ -51,8 +53,7 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
 ]
 requires-python = ">=3.12,<3.14"
-# Only what src/ imports today. The `sdxl` and `mcp` extras arrive with the
-# code that needs them.
+# Only what the client imports. Servers and model stacks are extras.
 dependencies = [
     "click>=8.1.0,<9",
     "httpx>=0.27.0",
@@ -65,6 +66,19 @@ dependencies = [
 flux = ["mflux>=0.24.0"]
 # OpenAI gpt-image-1 / DALL-E.
 openai = ["openai>=1.30.0"]
+# The HTTP servers behind `imagewright serve`. The FLUX server also needs
+# `flux`; the SDXL server also needs `sdxl`. Floors from gutenberg_kg's
+# docker/requirements-image.txt and requirements-sdxl.txt.
+serve = ["fastapi>=0.116.0", "uvicorn>=0.30.0", "pydantic>=2.8.0"]
+# SDXL-Lightning through diffusers (CUDA, MPS or CPU).
+sdxl = [
+    "torch>=2.4.0",
+    "diffusers>=0.30.0",
+    "transformers>=4.44.0",
+    "accelerate>=0.33.0",
+    "safetensors>=0.4.0",
+    "huggingface_hub>=0.24.0",
+]
 
 [project.urls]
 Homepage   = "https://github.com/Flux-Frontiers/imagewright"
@@ -84,6 +98,11 @@ optional = true
 
 [tool.poetry.group.dev.dependencies]
 detect-secrets = ">=1.5.0"
+# The server stack, so the tests drive the real FastAPI apps without the
+# `serve` extra. The model stacks (mflux, torch, diffusers) are never here.
+fastapi = ">=0.116.0"
+pydantic = ">=2.8.0"
+uvicorn = ">=0.30.0"
 pre-commit = ">=4.5.1"
 # >=9.0.3 is a security floor, not a preference: GHSA-6w46-j5rx-g56g.
 pytest = ">=9.0.3"
