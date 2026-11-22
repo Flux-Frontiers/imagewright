@@ -45,7 +45,7 @@ authors = [
 ]
 keywords = ["image-generation", "flux", "sdxl", "mflux", "diffusers", "mcp"]
 classifiers = [
-    "Development Status :: 2 - Pre-Alpha",
+    "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "Topic :: Multimedia :: Graphics",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
@@ -88,6 +88,7 @@ Homepage   = "https://github.com/Flux-Frontiers/imagewright"
 Repository = "https://github.com/Flux-Frontiers/imagewright"
 Issues     = "https://github.com/Flux-Frontiers/imagewright/issues"
 Changelog  = "https://github.com/Flux-Frontiers/imagewright/blob/main/CHANGELOG.md"
+Documentation = "https://flux-frontiers.github.io/imagewright/"
 
 [project.scripts]
 imagewright = "imagewright.cli:cli"
@@ -117,6 +118,16 @@ pytest-cov = ">=5.0.0"
 ruff = ">=0.15,<0.16"
 # 0.0.97 renamed `unresolved-import` to `import-not-found`.
 ty = ">=0.0.97"
+
+[tool.poetry.group.docs]
+optional = true
+
+[tool.poetry.group.docs.dependencies]
+# mkdocs is capped below 2: 2.0 removes the plugin system, and this site
+# depends on two plugins (search, mkdocstrings).
+mkdocs = ">=1.6,<2"
+mkdocs-material = ">=9.5"
+mkdocstrings = { version = ">=0.26", extras = ["python"] }
 
 # ---------------------------------------------------------------------------
 # Tool configuration

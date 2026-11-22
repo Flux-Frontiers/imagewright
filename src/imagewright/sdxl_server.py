@@ -9,8 +9,10 @@ Run it with ``imagewright serve --backend sdxl``. It needs the ``serve`` and
 ``sdxl`` extras. torch and diffusers are imported only inside the functions
 that need them, so this module imports on a core install.
 
-Environment variables (read by :meth:`SdxlServer.from_env`)
------------------------------------------------------------
+Environment variables
+---------------------
+``SdxlServer.from_env`` reads these.
+
 SDXL_MODEL        Lightning variant: sdxl_lightning_2 | _4 (default) | _8
 SDXL_BASE         SDXL base repo (default: stabilityai/stable-diffusion-xl-base-1.0)
 SDXL_OFFLINE      1 = never reach HuggingFace; fail if weights are not cached

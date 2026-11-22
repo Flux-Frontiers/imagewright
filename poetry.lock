@@ -94,12 +94,49 @@ files = [
 markers = {main = "(sys_platform == \"darwin\" or sys_platform == \"linux\") and extra == \"mcp\"", dev = "sys_platform == \"darwin\" or sys_platform == \"linux\""}
 
 [[package]]
+name = "babel"
+version = "2.18.0"
+description = "Internationalization utilities"
+optional = false
+python-versions = ">=3.8"
+groups = ["docs"]
+markers = "sys_platform == \"darwin\" or sys_platform == \"linux\""
+files = [
+    {file = "babel-2.18.0-py3-none-any.whl", hash = "sha256:e2b422b277c2b9a9630c1d7903c2a00d0830c409c59ac8cae9081c92f1aeba35"},
+    {file = "babel-2.18.0.tar.gz", hash = "sha256:b80b99a14bd085fcacfa15c9165f651fbb3406e66cc603abf11c5750937c992d"},
+]
+
+[package.extras]
+dev = ["backports.zoneinfo ; python_version < \"3.9\"", "freezegun (>=1.0,<2.0)", "jinja2 (>=3.0)", "pytest (>=6.0)", "pytest-cov", "pytz", "setuptools", "tzdata ; sys_platform == \"win32\""]
+
+[[package]]
+name = "backrefs"
+version = "8.3.1"
+description = "A wrapper around re and regex that adds additional back references."
+optional = false
+python-versions = ">=3.11"
+groups = ["docs"]
+markers = "sys_platform == \"darwin\" or sys_platform == \"linux\""
+files = [
+    {file = "backrefs-8.3.1-py310-none-any.whl", hash = "sha256:f3013ec3cc3ceb1069fa31c0432c73c2d72d652c03d082b96089745c290e7a10"},
+    {file = "backrefs-8.3.1-py311-none-any.whl", hash = "sha256:c27c66419b126ecf4d54966ad92f0e3c2a8aff0eac1687f57fe2a1b04fa4d244"},
+    {file = "backrefs-8.3.1-py312-none-any.whl", hash = "sha256:4f49546f237131515ed25943d1af4c79956425733bb199cb879da56d79ebb77a"},
+    {file = "backrefs-8.3.1-py313-none-any.whl", hash = "sha256:5e3fec5e2d2405da135c8b480df12005e2245500c12a60ffd3f496e4acb7cd79"},
+    {file = "backrefs-8.3.1-py314-none-any.whl", hash = "sha256:d818aea8a704e41c0ce60c619e23e136fd5fe87f0fdf0b601107473c35d2d407"},
+    {file = "backrefs-8.3.1-py315-none-any.whl", hash = "sha256:cecce5f4290b0eae0cb30a6e216c539465393218e6596ed164d82d20f2d96a54"},
+    {file = "backrefs-8.3.1.tar.gz", hash = "sha256:7b76f39c09d29740a6323be8d613cd9abee3068321c98ba8eb871ed23428eb20"},
+]
+
+[package.extras]
+extras = ["regex"]
+
+[[package]]
 name = "certifi"
 version = "2026.11.20"
 description = "Python package for providing Mozilla's CA Bundle."
 optional = false
 python-versions = ">=3.7"
-groups = ["main", "dev"]
+groups = ["main", "dev", "docs"]
 markers = "sys_platform == \"darwin\" or sys_platform == \"linux\""
 files = [
     {file = "certifi-2026.11.20-py3-none-any.whl", hash = "sha256:7422df25243767b9877031a2248cb14d09ddac9beee846f4cef3d5c9191d488f"},
@@ -239,7 +276,7 @@ version = "3.5.2"
 description = "The Real First Universal Charset Detector. Open, modern and actively maintained alternative to Chardet."
 optional = false
 python-versions = ">=3.7"
-groups = ["main", "dev"]
+groups = ["main", "dev", "docs"]
 files = [
     {file = "charset_normalizer-3.5.2-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:195c26fb65950f8fce54e26349852b7bdd7c5f120aeefbcc440b8a20faaed4a3"},
     {file = "charset_normalizer-3.5.2-cp310-cp310-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:9373ad13ef0d2c0fb761e04e55bfdee5a08b52cef2c882c8fbe9935b1517152e"},
@@ -414,7 +451,7 @@ files = [
     {file = "charset_normalizer-3.5.2-py3-none-any.whl", hash = "sha256:b6b751274acb69d77b3323d6b7dbaa3c7fdfc1eb829b7eb61d262f32e1af9685"},
     {file = "charset_normalizer-3.5.2.tar.gz", hash = "sha256:39de2a259fc954455c57274dc94c79d5842774e1247a016aff30bc0efed0f4ef"},
 ]
-markers = {main = "(sys_platform == \"darwin\" or sys_platform == \"linux\") and (extra == \"flux\" or extra == \"sdxl\")", dev = "sys_platform == \"darwin\" or sys_platform == \"linux\""}
+markers = {main = "(sys_platform == \"darwin\" or sys_platform == \"linux\") and (extra == \"flux\" or extra == \"sdxl\")", dev = "sys_platform == \"darwin\" or sys_platform == \"linux\"", docs = "sys_platform == \"darwin\" or sys_platform == \"linux\""}
 
 [[package]]
 name = "click"
@@ -422,7 +459,7 @@ version = "8.5.1"
 description = "Composable command line interface toolkit"
 optional = false
 python-versions = ">=3.10"
-groups = ["main", "dev"]
+groups = ["main", "dev", "docs"]
 markers = "sys_platform == \"darwin\" or sys_platform == \"linux\""
 files = [
     {file = "click-8.5.1-py3-none-any.whl", hash = "sha256:8bb5376d2006950386f8c6427613334a2acadc5f559cb80e638d00b4df957e37"},
@@ -435,12 +472,12 @@ version = "0.4.6"
 description = "Cross-platform colored terminal text."
 optional = false
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,!=3.6.*,>=2.7"
-groups = ["main", "dev"]
+groups = ["main", "dev", "docs"]
 files = [
     {file = "colorama-0.4.6-py2.py3-none-any.whl", hash = "sha256:4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6"},
     {file = "colorama-0.4.6.tar.gz", hash = "sha256:08695f5cb7ed6e0531a20572697297273c47b8cae5a63ffc6d6ed5c201be6e44"},
 ]
-markers = {main = "(extra == \"flux\" or extra == \"sdxl\") and platform_system == \"Windows\" and (sys_platform == \"darwin\" or sys_platform == \"linux\")", dev = "<empty>"}
+markers = {main = "(extra == \"flux\" or extra == \"sdxl\") and platform_system == \"Windows\" and (sys_platform == \"darwin\" or sys_platform == \"linux\")", dev = "<empty>", docs = "sys_platform == \"darwin\" or sys_platform == \"linux\""}
 
 [[package]]
 name = "contourpy"
@@ -1113,6 +1150,42 @@ test-full = ["adlfs", "aiohttp (!=4.0.0a0,!=4.0.0a1)", "backports-zstd ; python_
 tqdm = ["tqdm"]
 
 [[package]]
+name = "ghp-import"
+version = "2.1.0"
+description = "Copy your docs directly to the gh-pages branch."
+optional = false
+python-versions = "*"
+groups = ["docs"]
+markers = "sys_platform == \"darwin\" or sys_platform == \"linux\""
+files = [
+    {file = "ghp-import-2.1.0.tar.gz", hash = "sha256:9c535c4c61193c2df8871222567d7fd7e5014d835f97dc7b7439069e2413d343"},
+    {file = "ghp_import-2.1.0-py3-none-any.whl", hash = "sha256:8337dd7b50877f163d4c0289bc1f1c7f127550241988d568c1db512c4324a619"},
+]
+
+[package.dependencies]
+python-dateutil = ">=2.8.1"
+
+[package.extras]
+dev = ["flake8", "markdown", "twine", "wheel"]
+
+[[package]]
+name = "griffelib"
+version = "2.4.1"
+description = "Signatures for entire Python programs. Extract the structure, the frame, the skeleton of your project, to generate API documentation or find breaking changes in your API."
+optional = false
+python-versions = ">=3.11"
+groups = ["docs"]
+markers = "sys_platform == \"darwin\" or sys_platform == \"linux\""
+files = [
+    {file = "griffelib-2.4.1-py3-none-any.whl", hash = "sha256:76bc562f936ad1ce198d2cf6d0731bd5c92a7d934b69ef828ef22ee0ffdb62ce"},
+    {file = "griffelib-2.4.1.tar.gz", hash = "sha256:40c028dd2e623f464423f0e11e3c553158f1cf4f1368239a370534d73e1407ff"},
+]
+
+[package.extras]
+faster = ["prune-source (>=0.1.6)"]
+pypi = ["pip (>=24.0)", "platformdirs (>=4.2)", "wheel (>=0.42)"]
+
+[[package]]
 name = "h11"
 version = "0.16.0"
 description = "A pure-Python, bring-your-own-I/O implementation of HTTP/1.1"
@@ -1378,7 +1451,7 @@ version = "3.20"
 description = "Internationalized Domain Names in Applications (IDNA)"
 optional = false
 python-versions = ">=3.9"
-groups = ["main", "dev"]
+groups = ["main", "dev", "docs"]
 markers = "sys_platform == \"darwin\" or sys_platform == \"linux\""
 files = [
     {file = "idna-3.20-py3-none-any.whl", hash = "sha256:ab7ae7122974553370f0bdb919e1a960b2cd1bc1ef0276416d896db81c14582c"},
@@ -1431,14 +1504,14 @@ files = [
 name = "jinja2"
 version = "3.1.6"
 description = "A very fast and expressive template engine."
-optional = true
+optional = false
 python-versions = ">=3.7"
-groups = ["main"]
-markers = "(sys_platform == \"darwin\" or sys_platform == \"linux\") and (extra == \"flux\" or extra == \"sdxl\")"
+groups = ["main", "docs"]
 files = [
     {file = "jinja2-3.1.6-py3-none-any.whl", hash = "sha256:85ece4451f492d0c13c5dd7c13a64681a86afae63a5f347908daf103ce6d2f67"},
     {file = "jinja2-3.1.6.tar.gz", hash = "sha256:0137fb05990d35f1275a587e9aee6d56da821fc83491a0fb838183be43f66d6d"},
 ]
+markers = {main = "(sys_platform == \"darwin\" or sys_platform == \"linux\") and (extra == \"flux\" or extra == \"sdxl\")", docs = "sys_platform == \"darwin\" or sys_platform == \"linux\""}
 
 [package.dependencies]
 MarkupSafe = ">=2.0"
@@ -1767,6 +1840,23 @@ files = [
 ]
 
 [[package]]
+name = "markdown"
+version = "3.11.3"
+description = "Python implementation of John Gruber's Markdown."
+optional = false
+python-versions = ">=3.11"
+groups = ["docs"]
+markers = "sys_platform == \"darwin\" or sys_platform == \"linux\""
+files = [
+    {file = "markdown-3.11.3-py3-none-any.whl", hash = "sha256:e1a31a112232504d753e5c01bb8c2de90d3f0ba986b063e10770cf7695b09e73"},
+    {file = "markdown-3.11.3.tar.gz", hash = "sha256:81eb91631dc97ad1efbc76019ef0f80fe90ca49ddf81546752d79989c3bfff3e"},
+]
+
+[package.extras]
+docs = ["ghp-import (==2.1.0)", "justhtml (==3.11.2)", "mdx_gh_links (==0.4)", "mkdocstrings (==1.0.6)", "mkdocstrings-python (==1.16.8)", "pygments (==2.21.0)", "pymdown-extensions (==11.0.2)", "zensical (==0.0.62)"]
+testing = ["coverage", "pyyaml"]
+
+[[package]]
 name = "markdown-it-py"
 version = "4.3.0"
 description = "Python port of markdown-it. Markdown parsing, done right!"
@@ -1796,10 +1886,9 @@ testing = ["flit_core (>=3.4,<5)", "pytest", "pytest-regressions", "pytest-timeo
 name = "markupsafe"
 version = "3.0.4"
 description = "Safely add untrusted strings to HTML/XML markup."
-optional = true
+optional = false
 python-versions = ">=3.9"
-groups = ["main"]
-markers = "(sys_platform == \"darwin\" or sys_platform == \"linux\") and (extra == \"flux\" or extra == \"sdxl\")"
+groups = ["main", "docs"]
 files = [
     {file = "markupsafe-3.0.4-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:dd8ea6ebee7aedbf7c749fa80521d9ccf1ba473e0d1e14805caafbaad281c889"},
     {file = "markupsafe-3.0.4-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:dff05cb7016dff1e9fd68f4122c127b65dfc59de5306cfb7ad92f956f230bee2"},
@@ -1953,6 +2042,7 @@ files = [
     {file = "markupsafe-3.0.4-cp39-cp39-win_arm64.whl", hash = "sha256:6669c1bf34080161ce49c589cc512ef24d4c704ac9d2b2d3667f519c60418378"},
     {file = "markupsafe-3.0.4.tar.gz", hash = "sha256:2e9ad7dd851bf45fab9f75cbff4cb493fee9979e8d8c7c9c3ee119022518edd6"},
 ]
+markers = {main = "(sys_platform == \"darwin\" or sys_platform == \"linux\") and (extra == \"flux\" or extra == \"sdxl\")", docs = "sys_platform == \"darwin\" or sys_platform == \"linux\""}
 
 [[package]]
 name = "matplotlib"
@@ -2077,6 +2167,19 @@ files = [
 ]
 
 [[package]]
+name = "mergedeep"
+version = "1.3.4"
+description = "A deep merge function for 🐍."
+optional = false
+python-versions = ">=3.6"
+groups = ["docs"]
+markers = "sys_platform == \"darwin\" or sys_platform == \"linux\""
+files = [
+    {file = "mergedeep-1.3.4-py3-none-any.whl", hash = "sha256:70775750742b25c0d8f36c55aed03d24c3384d17c951b3175d898bd778ef0307"},
+    {file = "mergedeep-1.3.4.tar.gz", hash = "sha256:0096d52e9dad9939c3d975a774666af186eda617e6ca84df4c94dec30004f2a8"},
+]
+
+[[package]]
 name = "mflux"
 version = "0.24.0"
 description = "MLX native implementations of state-of-the-art generative image models."
@@ -2118,6 +2221,163 @@ torch = ">=2.13.0,<3.0"
 tqdm = ">=4.66.5,<5.0"
 transformers = ">=5.5.0,<6.0"
 urllib3 = ">=2.8.0"
+
+[[package]]
+name = "mkdocs"
+version = "1.6.1"
+description = "Project documentation with Markdown."
+optional = false
+python-versions = ">=3.8"
+groups = ["docs"]
+markers = "sys_platform == \"darwin\" or sys_platform == \"linux\""
+files = [
+    {file = "mkdocs-1.6.1-py3-none-any.whl", hash = "sha256:db91759624d1647f3f34aa0c3f327dd2601beae39a366d6e064c03468d35c20e"},
+    {file = "mkdocs-1.6.1.tar.gz", hash = "sha256:7b432f01d928c084353ab39c57282f29f92136665bdd6abf7c1ec8d822ef86f2"},
+]
+
+[package.dependencies]
+click = ">=7.0"
+colorama = {version = ">=0.4", markers = "platform_system == \"Windows\""}
+ghp-import = ">=1.0"
+jinja2 = ">=2.11.1"
+markdown = ">=3.3.6"
+markupsafe = ">=2.0.1"
+mergedeep = ">=1.3.4"
+mkdocs-get-deps = ">=0.2.0"
+packaging = ">=20.5"
+pathspec = ">=0.11.1"
+pyyaml = ">=5.1"
+pyyaml-env-tag = ">=0.1"
+watchdog = ">=2.0"
+
+[package.extras]
+i18n = ["babel (>=2.9.0)"]
+min-versions = ["babel (==2.9.0)", "click (==7.0)", "colorama (==0.4) ; platform_system == \"Windows\"", "ghp-import (==1.0)", "importlib-metadata (==4.4) ; python_version < \"3.10\"", "jinja2 (==2.11.1)", "markdown (==3.3.6)", "markupsafe (==2.0.1)", "mergedeep (==1.3.4)", "mkdocs-get-deps (==0.2.0)", "packaging (==20.5)", "pathspec (==0.11.1)", "pyyaml (==5.1)", "pyyaml-env-tag (==0.1)", "watchdog (==2.0)"]
+
+[[package]]
+name = "mkdocs-autorefs"
+version = "1.4.5"
+description = "Automatically link across pages in MkDocs."
+optional = false
+python-versions = ">=3.11"
+groups = ["docs"]
+markers = "sys_platform == \"darwin\" or sys_platform == \"linux\""
+files = [
+    {file = "mkdocs_autorefs-1.4.5-py3-none-any.whl", hash = "sha256:68ee484e0800f3ba50cda1bc4a94293adbdfcc010243c322b3f5d66e15d06770"},
+    {file = "mkdocs_autorefs-1.4.5.tar.gz", hash = "sha256:856f75b327b7717923ce06267094650689a510a748c48657f5333965950c2788"},
+]
+
+[package.dependencies]
+Markdown = ">=3.3"
+markupsafe = ">=2.0.1"
+mkdocs = ">=1.1"
+
+[[package]]
+name = "mkdocs-get-deps"
+version = "0.2.2"
+description = "An extra command for MkDocs that infers required PyPI packages from `plugins` in mkdocs.yml"
+optional = false
+python-versions = ">=3.9"
+groups = ["docs"]
+markers = "sys_platform == \"darwin\" or sys_platform == \"linux\""
+files = [
+    {file = "mkdocs_get_deps-0.2.2-py3-none-any.whl", hash = "sha256:e7878cbeac04860b8b5e0ca31d3abad3df9411a75a32cde82f8e44b6c16ff650"},
+    {file = "mkdocs_get_deps-0.2.2.tar.gz", hash = "sha256:8ee8d5f316cdbbb2834bc1df6e69c08fe769a83e040060de26d3c19fad3599a1"},
+]
+
+[package.dependencies]
+mergedeep = ">=1.3.4"
+platformdirs = ">=2.2.0"
+pyyaml = ">=5.1"
+
+[[package]]
+name = "mkdocs-material"
+version = "9.8.2"
+description = "Documentation that simply works"
+optional = false
+python-versions = ">=3.11"
+groups = ["docs"]
+markers = "sys_platform == \"darwin\" or sys_platform == \"linux\""
+files = [
+    {file = "mkdocs_material-9.8.2-py3-none-any.whl", hash = "sha256:ef1414cab33d64fcc13387e972af5ba4620f55f93482d1842933399ed2c69b02"},
+    {file = "mkdocs_material-9.8.2.tar.gz", hash = "sha256:005d942bdbfa22efa049f4818c31d42fb36bed6d362adb641dd7a2e948078f9d"},
+]
+
+[package.dependencies]
+babel = ">=2.10"
+backrefs = ">=5.7.post1"
+colorama = ">=0.4"
+jinja2 = ">=3.1.6"
+markdown = ">=3.8.1"
+mkdocs = ">=1.6,<2"
+mkdocs-material-extensions = ">=1.3"
+paginate = ">=0.5"
+pygments = ">=2.20.0"
+pymdown-extensions = ">=11.0.1"
+requests = ">=2.33.0"
+
+[package.extras]
+git = ["gitpython (>=3.2.1)", "mkdocs-git-committers-plugin-2 (>=1.1)", "mkdocs-git-revision-date-localized-plugin (>=1.2.4)"]
+imaging = ["cairosvg (>=2.9.1)", "pillow (>=13.0.0)"]
+recommended = ["mkdocs-minify-plugin (>=0.7)"]
+
+[[package]]
+name = "mkdocs-material-extensions"
+version = "1.3.1"
+description = "Extension pack for Python Markdown and MkDocs Material."
+optional = false
+python-versions = ">=3.8"
+groups = ["docs"]
+markers = "sys_platform == \"darwin\" or sys_platform == \"linux\""
+files = [
+    {file = "mkdocs_material_extensions-1.3.1-py3-none-any.whl", hash = "sha256:adff8b62700b25cb77b53358dad940f3ef973dd6db797907c49e3c2ef3ab4e31"},
+    {file = "mkdocs_material_extensions-1.3.1.tar.gz", hash = "sha256:10c9511cea88f568257f960358a467d12b970e1f7b2c0e5fb2bb48cab1928443"},
+]
+
+[[package]]
+name = "mkdocstrings"
+version = "1.0.8"
+description = "Automatic documentation from sources, for MkDocs."
+optional = false
+python-versions = ">=3.11"
+groups = ["docs"]
+markers = "sys_platform == \"darwin\" or sys_platform == \"linux\""
+files = [
+    {file = "mkdocstrings-1.0.8-py3-none-any.whl", hash = "sha256:4b03ed2b863009f1153f0d04aacb22a85b92afc28a0636d85717c92eecca638c"},
+    {file = "mkdocstrings-1.0.8.tar.gz", hash = "sha256:b50fc326230906425c82ee9ec59b80e5db00892b2b593d4d0b841a0d4acf537b"},
+]
+
+[package.dependencies]
+Jinja2 = ">=3.1"
+Markdown = ">=3.6"
+MarkupSafe = ">=1.1"
+mkdocs = ">=1.6"
+mkdocs-autorefs = ">=1.4"
+mkdocstrings-python = {version = ">=1.16.2", optional = true, markers = "extra == \"python\""}
+pymdown-extensions = ">=6.3"
+
+[package.extras]
+crystal = ["mkdocstrings-crystal (>=0.3.4)"]
+python = ["mkdocstrings-python (>=1.16.2)"]
+python-legacy = ["mkdocstrings-python-legacy (>=0.2.1)"]
+
+[[package]]
+name = "mkdocstrings-python"
+version = "2.0.11"
+description = "A Python handler for mkdocstrings."
+optional = false
+python-versions = ">=3.11"
+groups = ["docs"]
+markers = "sys_platform == \"darwin\" or sys_platform == \"linux\""
+files = [
+    {file = "mkdocstrings_python-2.0.11-py3-none-any.whl", hash = "sha256:86ba14ea584a838e144b40d131b0780452e8abee57d90db6c84c9a9ac114c527"},
+    {file = "mkdocstrings_python-2.0.11.tar.gz", hash = "sha256:12d9b8bb1ccdb160a220a771a169300b788e8af5ad6456a0b8aeabbb103d42b2"},
+]
+
+[package.dependencies]
+griffelib = ">=2.4"
+mkdocs-autorefs = ">=1.4"
+mkdocstrings = ">=1.0.8"
 
 [[package]]
 name = "mlx"
@@ -2812,12 +3072,47 @@ version = "26.3"
 description = "Core utilities for Python packages"
 optional = false
 python-versions = ">=3.9"
-groups = ["main", "dev"]
+groups = ["main", "dev", "docs"]
 files = [
     {file = "packaging-26.3-py3-none-any.whl", hash = "sha256:d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c"},
     {file = "packaging-26.3.tar.gz", hash = "sha256:94edc256424af38762eb31306eed28beb9f0efc50a8837492c9d6fd6004aed79"},
 ]
-markers = {main = "(sys_platform == \"darwin\" or sys_platform == \"linux\") and (extra == \"flux\" or extra == \"sdxl\")", dev = "sys_platform == \"darwin\" or sys_platform == \"linux\""}
+markers = {main = "(sys_platform == \"darwin\" or sys_platform == \"linux\") and (extra == \"flux\" or extra == \"sdxl\")", dev = "sys_platform == \"darwin\" or sys_platform == \"linux\"", docs = "sys_platform == \"darwin\" or sys_platform == \"linux\""}
+
+[[package]]
+name = "paginate"
+version = "0.5.7"
+description = "Divides large result sets into pages for easier browsing"
+optional = false
+python-versions = "*"
+groups = ["docs"]
+markers = "sys_platform == \"darwin\" or sys_platform == \"linux\""
+files = [
+    {file = "paginate-0.5.7-py2.py3-none-any.whl", hash = "sha256:b885e2af73abcf01d9559fd5216b57ef722f8c42affbb63942377668e35c7591"},
+    {file = "paginate-0.5.7.tar.gz", hash = "sha256:22bd083ab41e1a8b4f3690544afb2c60c25e5c9a63a30fa2f483f6c60c8e5945"},
+]
+
+[package.extras]
+dev = ["pytest", "tox"]
+lint = ["black"]
+
+[[package]]
+name = "pathspec"
+version = "1.1.1"
+description = "Utility library for gitignore style pattern matching of file paths."
+optional = false
+python-versions = ">=3.9"
+groups = ["docs"]
+markers = "sys_platform == \"darwin\" or sys_platform == \"linux\""
+files = [
+    {file = "pathspec-1.1.1-py3-none-any.whl", hash = "sha256:a00ce642f577bf7f473932318056212bc4f8bfdf53128c78bbd5af0b9b20b189"},
+    {file = "pathspec-1.1.1.tar.gz", hash = "sha256:17db5ecd524104a120e173814c90367a96a98d07c45b2e10c2f3919fff91bf5a"},
+]
+
+[package.extras]
+hyperscan = ["hyperscan (>=0.7)"]
+optional = ["typing-extensions (>=4)"]
+re2 = ["google-re2 (>=1.1)"]
 
 [[package]]
 name = "piexif"
@@ -2940,12 +3235,12 @@ version = "4.14.8"
 description = "A small Python package for determining appropriate platform-specific dirs, e.g. a `user data dir`."
 optional = false
 python-versions = ">=3.11"
-groups = ["main", "dev"]
+groups = ["main", "dev", "docs"]
 files = [
     {file = "platformdirs-4.14.8-py3-none-any.whl", hash = "sha256:1e34af590de4d978631b751eb2202f2fee4497537a17c1720b12fcf57b331392"},
     {file = "platformdirs-4.14.8.tar.gz", hash = "sha256:96893d686e84e9e6f358a9ea41a8de544df66dbf2ba6cda250e7dc73acf85b9b"},
 ]
-markers = {main = "(sys_platform == \"darwin\" or sys_platform == \"linux\") and extra == \"flux\"", dev = "sys_platform == \"darwin\" or sys_platform == \"linux\""}
+markers = {main = "(sys_platform == \"darwin\" or sys_platform == \"linux\") and extra == \"flux\"", dev = "sys_platform == \"darwin\" or sys_platform == \"linux\"", docs = "sys_platform == \"darwin\" or sys_platform == \"linux\""}
 
 [[package]]
 name = "pluggy"
@@ -3257,12 +3552,12 @@ version = "2.21.0"
 description = "Pygments is a syntax highlighting package written in Python."
 optional = false
 python-versions = ">=3.9"
-groups = ["main", "dev"]
+groups = ["main", "dev", "docs"]
 files = [
     {file = "pygments-2.21.0-py3-none-any.whl", hash = "sha256:2363c69b61c4a97c838da3b130dcd6468f4848992b21a82f2a63ec34377137d9"},
     {file = "pygments-2.21.0.tar.gz", hash = "sha256:610ca751c9bc2492b38eb9a38a7fbc93edbbb2d7182edaf34e66ae493dee5c8c"},
 ]
-markers = {main = "(sys_platform == \"darwin\" or sys_platform == \"linux\") and (extra == \"flux\" or extra == \"sdxl\")", dev = "sys_platform == \"darwin\" or sys_platform == \"linux\""}
+markers = {main = "(sys_platform == \"darwin\" or sys_platform == \"linux\") and (extra == \"flux\" or extra == \"sdxl\")", dev = "sys_platform == \"darwin\" or sys_platform == \"linux\"", docs = "sys_platform == \"darwin\" or sys_platform == \"linux\""}
 
 [package.extras]
 windows-terminal = ["colorama (>=0.4.6)"]
@@ -3285,6 +3580,26 @@ cryptography = {version = ">=3.4.0", optional = true, markers = "extra == \"cryp
 
 [package.extras]
 crypto = ["cryptography (>=3.4.0)"]
+
+[[package]]
+name = "pymdown-extensions"
+version = "13.1.2"
+description = "Extension pack for Python Markdown."
+optional = false
+python-versions = ">=3.11.5"
+groups = ["docs"]
+markers = "sys_platform == \"darwin\" or sys_platform == \"linux\""
+files = [
+    {file = "pymdown_extensions-13.1.2-py3-none-any.whl", hash = "sha256:20eec6babdadcdb47b5a91b3e69ff9f846d506e887125dcb027518c47d412693"},
+    {file = "pymdown_extensions-13.1.2.tar.gz", hash = "sha256:724701395585d027fb18a6ad3377636570bac4f2917ed809f06cbc811d7e60bb"},
+]
+
+[package.dependencies]
+markdown = ">=3.10.3"
+pyyaml = "*"
+
+[package.extras]
+extra = ["pygments (>=2.19.1)"]
 
 [[package]]
 name = "pyparsing"
@@ -3350,14 +3665,14 @@ testing = ["process-tests", "pytest-xdist", "virtualenv"]
 name = "python-dateutil"
 version = "4.0.0"
 description = "Extensions to the standard Python datetime module"
-optional = true
+optional = false
 python-versions = ">=3.11"
-groups = ["main"]
-markers = "(sys_platform == \"darwin\" or sys_platform == \"linux\") and extra == \"flux\""
+groups = ["main", "docs"]
 files = [
     {file = "python_dateutil-4.0.0-py3-none-any.whl", hash = "sha256:a5e246f79eb80475e691bf93862cead98decd8a498cf53ba0516fcdc0f50dc1c"},
     {file = "python_dateutil-4.0.0.tar.gz", hash = "sha256:d7295ff14fdc0f92f662100bfb6c551d160ca090f2939f1ec5b9794265c03f06"},
 ]
+markers = {main = "(sys_platform == \"darwin\" or sys_platform == \"linux\") and extra == \"flux\"", docs = "sys_platform == \"darwin\" or sys_platform == \"linux\""}
 
 [package.dependencies]
 tzdata = "*"
@@ -3445,7 +3760,7 @@ version = "6.0.4"
 description = "YAML parser and emitter for Python"
 optional = false
 python-versions = ">=3.10"
-groups = ["main", "dev"]
+groups = ["main", "dev", "docs"]
 files = [
     {file = "pyyaml-6.0.4-cp310-cp310-macosx_10_15_x86_64.whl", hash = "sha256:78be5a1b05a5d1fd46d0290393e5deeb581fa617585462c1b84f7c6b0cb1e489"},
     {file = "pyyaml-6.0.4-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:e39017e1cef43d03b2ba427f60213e4b36dbc6fb092235fa3de3a510ce064d3c"},
@@ -3523,7 +3838,23 @@ files = [
     {file = "pyyaml-6.0.4-cp315-cp315t-win_arm64.whl", hash = "sha256:d276f23e2371deb5ee68dd252cc9c2402b806b54d8d2cc7efbb6c34c3a78d886"},
     {file = "pyyaml-6.0.4.tar.gz", hash = "sha256:e24bf71af8a432d7808fabff134d38dfe16d3cbb41f2873bb4b1e42422de0a1a"},
 ]
-markers = {main = "(sys_platform == \"darwin\" or sys_platform == \"linux\") and (extra == \"flux\" or extra == \"sdxl\")", dev = "sys_platform == \"darwin\" or sys_platform == \"linux\""}
+markers = {main = "(sys_platform == \"darwin\" or sys_platform == \"linux\") and (extra == \"flux\" or extra == \"sdxl\")", dev = "sys_platform == \"darwin\" or sys_platform == \"linux\"", docs = "sys_platform == \"darwin\" or sys_platform == \"linux\""}
+
+[[package]]
+name = "pyyaml-env-tag"
+version = "1.1"
+description = "A custom YAML tag for referencing environment variables in YAML files."
+optional = false
+python-versions = ">=3.9"
+groups = ["docs"]
+markers = "sys_platform == \"darwin\" or sys_platform == \"linux\""
+files = [
+    {file = "pyyaml_env_tag-1.1-py3-none-any.whl", hash = "sha256:17109e1a528561e32f026364712fee1264bc2ea6715120891174ed1b980d2e04"},
+    {file = "pyyaml_env_tag-1.1.tar.gz", hash = "sha256:2eb38b75a2d21ee0475d6d97ec19c63287a7e140231e4214969d0eac923cd7ff"},
+]
+
+[package.dependencies]
+pyyaml = "*"
 
 [[package]]
 name = "referencing"
@@ -3674,12 +4005,12 @@ version = "2.34.2"
 description = "Python HTTP for Humans."
 optional = false
 python-versions = ">=3.10"
-groups = ["main", "dev"]
+groups = ["main", "dev", "docs"]
 files = [
     {file = "requests-2.34.2-py3-none-any.whl", hash = "sha256:2a0d60c172f83ac6ab31e4554906c0f3b3588d37b5cb939b1c061f4907e278e0"},
     {file = "requests-2.34.2.tar.gz", hash = "sha256:f288924cae4e29463698d6d60bc6a4da69c89185ad1e0bcc4104f584e960b9ed"},
 ]
-markers = {main = "(sys_platform == \"darwin\" or sys_platform == \"linux\") and (extra == \"flux\" or extra == \"sdxl\")", dev = "sys_platform == \"darwin\" or sys_platform == \"linux\""}
+markers = {main = "(sys_platform == \"darwin\" or sys_platform == \"linux\") and (extra == \"flux\" or extra == \"sdxl\")", dev = "sys_platform == \"darwin\" or sys_platform == \"linux\"", docs = "sys_platform == \"darwin\" or sys_platform == \"linux\""}
 
 [package.dependencies]
 certifi = ">=2023.5.7"
@@ -4397,14 +4728,14 @@ typing-extensions = ">=4.15.0"
 name = "tzdata"
 version = "2026.6"
 description = "Provider of IANA time zone data"
-optional = true
+optional = false
 python-versions = ">=2"
-groups = ["main"]
-markers = "(sys_platform == \"darwin\" or sys_platform == \"linux\") and extra == \"flux\""
+groups = ["main", "docs"]
 files = [
     {file = "tzdata-2026.6-py2.py3-none-any.whl", hash = "sha256:0a10eec6e13ef16b627fabed9a5f2ba61a62b1c67f327305f4e7e412a70b4aec"},
     {file = "tzdata-2026.6.tar.gz", hash = "sha256:85d2cd9c09f81f0bb29db27759fc83af4f1e620efb814f8c5bf8b4cc4feece6d"},
 ]
+markers = {main = "(sys_platform == \"darwin\" or sys_platform == \"linux\") and extra == \"flux\"", docs = "sys_platform == \"darwin\" or sys_platform == \"linux\""}
 
 [[package]]
 name = "urllib3"
@@ -4412,12 +4743,12 @@ version = "2.8.0"
 description = "HTTP library with thread-safe connection pooling, file post, and more."
 optional = false
 python-versions = ">=3.10"
-groups = ["main", "dev"]
+groups = ["main", "dev", "docs"]
 files = [
     {file = "urllib3-2.8.0-py3-none-any.whl", hash = "sha256:0cf3cae568d36aa9576b28dfb35f11328f1cb974ca7647d9475ebb86c75ac6e3"},
     {file = "urllib3-2.8.0.tar.gz", hash = "sha256:63bf2ead4c879426ebf22ef2a781eeb4aa3b4ae798a0435506f8687fd5bb9b63"},
 ]
-markers = {main = "(sys_platform == \"darwin\" or sys_platform == \"linux\") and (extra == \"flux\" or extra == \"sdxl\")", dev = "sys_platform == \"darwin\" or sys_platform == \"linux\""}
+markers = {main = "(sys_platform == \"darwin\" or sys_platform == \"linux\") and (extra == \"flux\" or extra == \"sdxl\")", dev = "sys_platform == \"darwin\" or sys_platform == \"linux\"", docs = "sys_platform == \"darwin\" or sys_platform == \"linux\""}
 
 [package.extras]
 brotli = ["brotli (>=1.2.0) ; platform_python_implementation == \"CPython\"", "brotlicffi (>=1.2.0.0) ; platform_python_implementation != \"CPython\""]
@@ -4466,6 +4797,64 @@ platformdirs = ">=4.4,<5"
 python-discovery = ">=1.6.1"
 
 [[package]]
+name = "watchdog"
+version = "7.1.1"
+description = "Filesystem events monitoring"
+optional = false
+python-versions = ">=3.11"
+groups = ["docs"]
+markers = "sys_platform == \"darwin\" or sys_platform == \"linux\""
+files = [
+    {file = "watchdog-7.1.1-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:0c7c72fc3cd4c9fe1e9bd356b4c22ba999a95f32d0199b41b22b53b17d2ecdc8"},
+    {file = "watchdog-7.1.1-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:09c29980d0469b0fe25a3de78f7314e56b224ccdc9c97ab736508b3ceb8a6327"},
+    {file = "watchdog-7.1.1-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:0c3d34267f0c4a9397c3891d3d40a0c75e7dcb5889266788e99bd3c878e8eedd"},
+    {file = "watchdog-7.1.1-cp312-cp312-macosx_10_13_universal2.whl", hash = "sha256:a1ca497559d1fb32eae26f10c1fb2aca82042fed4441bcbaebbd7f585f09ef0b"},
+    {file = "watchdog-7.1.1-cp312-cp312-macosx_10_13_x86_64.whl", hash = "sha256:0a37521b6088d81df2f4d94dc2cb10b23fe873c68f6fadadd36dd9bf83dde736"},
+    {file = "watchdog-7.1.1-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:a785b40ecb69f7743762663aaf0d8303b9a0ea6372710f38fe390a912507fc46"},
+    {file = "watchdog-7.1.1-cp313-cp313-macosx_10_13_universal2.whl", hash = "sha256:8b25decbd54c270e3f7f23ffbccfdd485346c95cc4845116d98f5c5cf159be15"},
+    {file = "watchdog-7.1.1-cp313-cp313-macosx_10_13_x86_64.whl", hash = "sha256:aae3d997730089bdf30ae724122cda4617f58a40603d63a3495ce48d2b50ba0c"},
+    {file = "watchdog-7.1.1-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:536064ddeb3671534181004a45867d1abc32566f45054910772c4eb7e14d945d"},
+    {file = "watchdog-7.1.1-cp314-cp314-macosx_10_15_universal2.whl", hash = "sha256:05e85c22dcd53f7152d1e03e785e241341d586b06a5115be7c0ea86436ccc1f6"},
+    {file = "watchdog-7.1.1-cp314-cp314-macosx_10_15_x86_64.whl", hash = "sha256:7c7838dc644664f750a25b1a273a9c0cee7978a0adc903915dc13ff74225e9e4"},
+    {file = "watchdog-7.1.1-cp314-cp314-macosx_11_0_arm64.whl", hash = "sha256:30f127042a876812f117a17e7fa52f66958a157e3deffef87fbd0001bcd90bb9"},
+    {file = "watchdog-7.1.1-cp314-cp314t-macosx_10_15_universal2.whl", hash = "sha256:896e9d00a11c0af24e138fc82511d5bb1e4465c0caa4bec442598e060d5afdaf"},
+    {file = "watchdog-7.1.1-cp314-cp314t-macosx_10_15_x86_64.whl", hash = "sha256:d1e1bac43768d0e413256a058d4e28024489cf4a9ef9835a2ba29b936887ebc8"},
+    {file = "watchdog-7.1.1-cp314-cp314t-macosx_11_0_arm64.whl", hash = "sha256:7d4eabe2b5612b1434c7da3db517f6df38cc3ea50fd7907d571ec44bfadbb305"},
+    {file = "watchdog-7.1.1-cp315-cp315-macosx_10_15_universal2.whl", hash = "sha256:d55b9572480f8a0d3f644a854639f97e578cdf6ec8af0ecc3aef2336e252657f"},
+    {file = "watchdog-7.1.1-cp315-cp315-macosx_10_15_x86_64.whl", hash = "sha256:7c5bcc506e648465338dcef4134c7db0f90eda65610658c63d26224008869a9d"},
+    {file = "watchdog-7.1.1-cp315-cp315-macosx_11_0_arm64.whl", hash = "sha256:a6a34f4da483edd01c35002c204148c6bd7a0b0a5c9b35e66776d31913d4d014"},
+    {file = "watchdog-7.1.1-cp315-cp315t-macosx_10_15_universal2.whl", hash = "sha256:507a75e3df6f9ab8a063d3660424f09a0d6fa99b45fc91017a0898494da82c31"},
+    {file = "watchdog-7.1.1-cp315-cp315t-macosx_10_15_x86_64.whl", hash = "sha256:97cef4d4cfb4526f2dd215cbbfe3cafda1a22d7d1227e7da49a021cb537dc39c"},
+    {file = "watchdog-7.1.1-cp315-cp315t-macosx_11_0_arm64.whl", hash = "sha256:81ebb0e3ed6ec1d546498908a365fcd702db34cf096b8be88c239565c9668892"},
+    {file = "watchdog-7.1.1-pp311-pypy311_pp80-macosx_10_15_x86_64.whl", hash = "sha256:d03720ed1d49845437cb8c1dd91eb04269ad031edcd3b85b28687bdc59a91207"},
+    {file = "watchdog-7.1.1-pp311-pypy311_pp80-macosx_11_0_arm64.whl", hash = "sha256:61821b550c888f2268090a7b590d11506fcee98a41254fe69d8bfc94660feac2"},
+    {file = "watchdog-7.1.1-pp312-pypy312_pp80-macosx_10_15_x86_64.whl", hash = "sha256:3b4deb56b2245715f48fb4355fe6ba2bc02ad55384aaadc280a9a832d7cd6a80"},
+    {file = "watchdog-7.1.1-pp312-pypy312_pp80-macosx_11_0_arm64.whl", hash = "sha256:e578a70a2f3ba5098be61c41d45ceff3d377436d18e18ee709424229ffb3825a"},
+    {file = "watchdog-7.1.1-py3-none-manylinux2014_aarch64.whl", hash = "sha256:6d23d2423ab0043a2aa10a758a848f4d0b36d90d9c774b168d6988c51718ba14"},
+    {file = "watchdog-7.1.1-py3-none-manylinux2014_armv7l.whl", hash = "sha256:142578ea0aa0b9d607d508b0490d8591ae1b6852de8bd15bc23ee495c50a6a0e"},
+    {file = "watchdog-7.1.1-py3-none-manylinux2014_i686.whl", hash = "sha256:9e8f9bd6d83d8231895be3a5bd8e5941520a35d9200444b87c824c54656e6a64"},
+    {file = "watchdog-7.1.1-py3-none-manylinux2014_ppc64.whl", hash = "sha256:48fea86f6656f64276146d256dbed92ed81bfc0b298b45266a633985d860ce0c"},
+    {file = "watchdog-7.1.1-py3-none-manylinux2014_ppc64le.whl", hash = "sha256:eef947410157eabb213dd987c04b102b2f4769c3e4d86b627d80a2d35ceba224"},
+    {file = "watchdog-7.1.1-py3-none-manylinux2014_s390x.whl", hash = "sha256:9d1f0fb994d983bee5240fc2ec4bf4d2a7d08e15e3104c6d476cb7ccebf3f6b7"},
+    {file = "watchdog-7.1.1-py3-none-manylinux2014_x86_64.whl", hash = "sha256:3bc20dfaf25567fff733f9108f74fda0a32925975ed9bc07118f153730ae5f6f"},
+    {file = "watchdog-7.1.1-py3-none-manylinux_2_17_aarch64.whl", hash = "sha256:507ac844f6f9d070e869f0967601c83a962f7ce138c227592bdf6e70e65ce5aa"},
+    {file = "watchdog-7.1.1-py3-none-manylinux_2_17_armv7l.whl", hash = "sha256:0c08c2a48f97ecd3b6512e826472e04c488e7d5c4dd1189ac2854f98eee24f5a"},
+    {file = "watchdog-7.1.1-py3-none-manylinux_2_17_i686.whl", hash = "sha256:1f44c085c768470930ebfa31c7159dd506fb11cf1db0761fbf57922f59b528e7"},
+    {file = "watchdog-7.1.1-py3-none-manylinux_2_17_ppc64.whl", hash = "sha256:3287e8f628a1c333c342898c827aa32554921f031e0d9b1c56122c24ff1cf590"},
+    {file = "watchdog-7.1.1-py3-none-manylinux_2_17_ppc64le.whl", hash = "sha256:f221e03057394041166cf0562d4a7bdc19330a68e3b852f4df208e4889b0e175"},
+    {file = "watchdog-7.1.1-py3-none-manylinux_2_17_s390x.whl", hash = "sha256:0a1a1b53d30f158ea85459c7aaa5f746eabe2d4cf6e15273c8a0e9d0bb53157e"},
+    {file = "watchdog-7.1.1-py3-none-manylinux_2_17_x86_64.whl", hash = "sha256:32b4c6b7fa0700782756b9faf868071c2a95249bbce48df5c3e0840b98fe8af5"},
+    {file = "watchdog-7.1.1-py3-none-win32.whl", hash = "sha256:5e161c1d97c6a9140e6713b75eb5811845998cf8f57e02c23444e6951488524c"},
+    {file = "watchdog-7.1.1-py3-none-win_amd64.whl", hash = "sha256:f6e0da274cc1610b37ff7afe0c2a2b454308a0684efea0bfb7bedaa530b08106"},
+    {file = "watchdog-7.1.1-py3-none-win_arm64.whl", hash = "sha256:7bc7f4389b1634e874ffd0d6c84c9680c6adbb48c3aece8e087bb25ee9b93f0e"},
+    {file = "watchdog-7.1.1-py3-none-win_ia64.whl", hash = "sha256:31a0e81dca2cbe5f1f2d46906277ae3aeb64cf9506d60cf10fa9ad00cbdaa6c8"},
+    {file = "watchdog-7.1.1.tar.gz", hash = "sha256:d7dc3bf0c3417c002ee976e958479c54d8ca18cbb3532fadbe69511fa389da15"},
+]
+
+[package.extras]
+watchmedo = ["PyYAML (>=3.10)"]
+
+[[package]]
 name = "zipp"
 version = "4.1.2"
 description = "Backport of pathlib-compatible object wrapper for zip files"
@@ -4496,4 +4885,4 @@ serve = ["fastapi", "pydantic", "uvicorn"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12,<3.14"
-content-hash = "566a8d773e4952bcef35523f9586ce9e12b9a16302725fb50e4aad53c58a403f"
+content-hash = "558e570e00fc7a34e49e09d03ca6a6f3cfa7a5988cede300cf58d81fca7f3cc7"

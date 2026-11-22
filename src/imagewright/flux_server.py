@@ -8,8 +8,10 @@ answers the same routes, request fields and response bodies as gutenberg_kg's
 Run it with ``imagewright serve``. It needs the ``serve`` and ``flux`` extras;
 nothing at module scope imports either, so this module imports on a core install.
 
-Environment variables (read by :meth:`FluxServer.from_env`)
------------------------------------------------------------
+Environment variables
+---------------------
+``FluxServer.from_env`` reads these.
+
 IMAGE_MODEL           HF repo for Flux2Klein. Fallback: GUTENKG_IMAGE_MODEL.
                       Default: mlx-community/flux2-klein-4b-4bit
 IMAGE_STEPS           Default inference steps (default: 4)

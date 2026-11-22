@@ -8,7 +8,8 @@ answer that contract, an in-process mode with no server, and an MCP tool. It
 is not a KG package and must never import one. `gutenberg_kg` and `kgrag`
 depend on it, not the other way round.
 
-The repository is private until its first release. The plan and the order of
+The repository is public and publishes to PyPI and Zenodo; the release
+procedure is `.claude/skills/release/SKILL.md`. The plan and the order of
 work are in `kgrag_priv/docs/KGRAG_IMAGINE_PLAN.md` (sweep item 60).
 
 Fleet-wide rules (dependency conventions, hooks, releases) are in
@@ -18,9 +19,10 @@ Fleet-wide rules (dependency conventions, hooks, releases) are in
 ## Development workflow
 
 ```bash
-env -u VIRTUAL_ENV -u POETRY_ACTIVE poetry install --with dev --sync
+env -u VIRTUAL_ENV -u POETRY_ACTIVE poetry install --with dev,docs --sync
 env -u VIRTUAL_ENV -u POETRY_ACTIVE .venv/bin/pytest --cov
 env -u VIRTUAL_ENV -u POETRY_ACTIVE .venv/bin/pre-commit run --all-files
+env -u VIRTUAL_ENV -u POETRY_ACTIVE .venv/bin/mkdocs build --strict
 ```
 
 The tests need no extras: the dev group carries fastapi, uvicorn, pydantic
@@ -53,6 +55,16 @@ floor.
 - No test may download a model or call a paid API. Fake the model object, and
   run the real FastAPI app and the real client around it.
 - A server binds `127.0.0.1` unless told otherwise; it has no authentication.
+- A new command, MCP tool or public module needs a page on the docs site
+  (`docs/`, listed in `mkdocs.yml`'s nav) in the same change; a new module
+  also needs a `docs/api/<module>.md` stub. `tests/test_docs_coverage.py`
+  fails the suite otherwise. Read every option and default from the code.
+- `poetry.lock` marks nearly every package `sys_platform == "darwin" or
+  sys_platform == "linux"`, so a Windows `poetry install` skips them (PyPI
+  installs are unaffected): mflux 0.24.0 requires `mlx` on darwin and
+  `mlx[cuda13]` on linux, and Poetry 2.4 resolves duplicate dependencies that
+  differ in extras as one override per marker with no case for other
+  platforms; it cannot be fixed from this pyproject.
 
 ## Code style
 
