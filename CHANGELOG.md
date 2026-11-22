@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-11-22
+
 ### Added
 
 - **Documentation site** at
@@ -62,6 +64,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **`imagewright generate PROMPT`** writes one PNG and prints its path.
 - **Extras.** `flux` (`mflux>=0.24.0`) and `openai` (`openai>=1.30.0`). A
   backend whose extra is missing raises `MissingExtraError` naming the
-  `pip install` command. Core dependencies gain `httpx` and `pillow`.
+  `pip install` command. The core dependencies are `click`, `httpx` and
+  `pillow`.
 - **The repository.** Package layout, CI, pre-commit hooks and
   `imagewright --version`.
