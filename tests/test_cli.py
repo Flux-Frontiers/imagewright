@@ -222,3 +222,11 @@ def test_serve_sdxl_without_torch_names_the_pip_command(monkeypatch: pytest.Monk
 def test_serve_rejects_an_unknown_backend():
     result = CliRunner().invoke(cli, ["serve", "--backend", "dalle"])
     assert result.exit_code == 2
+
+
+@pytest.mark.parametrize("command", ["generate", "serve"])
+def test_command_help_shows_no_docstring_fields(command: str) -> None:
+    """The ``:param:`` lines are for readers of the source, not of ``--help``."""
+    result = CliRunner().invoke(cli, [command, "--help"])
+    assert result.exit_code == 0
+    assert ":param" not in result.output

@@ -49,6 +49,7 @@ def generate(
 ) -> None:
     """Generate an image from PROMPT, write it as a PNG and print its path.
 
+    \f
     :param prompt: Text description of the image.
     :param size: ``WIDTHxHEIGHT``, or None for the 3:2 default.
     :param seed: Random seed, or None for a random one.
