@@ -118,6 +118,16 @@ ruff = ">=0.15,<0.16"
 # 0.0.97 renamed `unresolved-import` to `import-not-found`.
 ty = ">=0.0.97"
 
+[tool.poetry.group.docs]
+optional = true
+
+[tool.poetry.group.docs.dependencies]
+# mkdocs is capped below 2: 2.0 removes the plugin system, and this site
+# depends on two plugins (search, mkdocstrings).
+mkdocs = ">=1.6,<2"
+mkdocs-material = ">=9.5"
+mkdocstrings = { version = ">=0.26", extras = ["python"] }
+
 # ---------------------------------------------------------------------------
 # Tool configuration
 # ---------------------------------------------------------------------------

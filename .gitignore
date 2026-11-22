@@ -44,3 +44,6 @@ uv.lock
 # MCP server config -- machine-specific, contains absolute paths
 .mcp.json.sav
 # === end KG generated artifacts ===
+
+# mkdocs build output
+site/
