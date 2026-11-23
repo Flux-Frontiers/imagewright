@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **A logo.** `scripts/build_logo.py` draws imagewright's Art Techno mark (prompt
+  lines into the die, a lighthouse whose lamp room is the die), the banner, the
+  64 px icon, and the docs site's logo and favicon, which `mkdocs.yml` now uses.
+  The README opens with the banner.
+
 - **`imagewright service install` and `uninstall`.** On macOS they run the
   server under launchd: a LaunchAgent that starts at login, or with `--boot`
   (under `sudo`) a LaunchDaemon that starts at boot with nobody logged in, for
