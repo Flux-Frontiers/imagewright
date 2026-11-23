@@ -17,6 +17,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   install while another server holds the port. `--dry-run` prints the property
   list.
 
+### Changed
+
+- **Beta.** The PyPI classifier is now Development Status 4 - Beta. The
+  README drops its status table for a What's new section.
+
 - **A Zenodo DOI.** The concept DOI `10.5281/zenodo.24450350` is in the README
   (badge, APA and BibTeX) and in `CITATION.cff`. It always resolves to the
   latest archived version.
