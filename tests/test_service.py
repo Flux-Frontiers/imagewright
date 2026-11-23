@@ -209,8 +209,8 @@ def test_target_user_under_sudo_is_the_invoking_user(monkeypatch: pytest.MonkeyP
     assert user == me and home.is_dir()
 
 
-@pytest.mark.skipif(sys.platform != "darwin", reason="launchd is macOS only")
-def test_cli_dry_run_prints_the_plist_and_changes_nothing():
+def test_cli_dry_run_prints_the_plist_and_changes_nothing(monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setattr(sys, "platform", "darwin")  # CI runs on Linux; nothing reaches launchd
     result = CliRunner().invoke(
         cli, ["service", "install", "--dry-run", "--host", "0.0.0.0", "--idle-unload", "300"]
     )
@@ -219,3 +219,10 @@ def test_cli_dry_run_prints_the_plist_and_changes_nothing():
     assert head.endswith("Library/LaunchAgents/local.imagewright.plist")
     plist = plistlib.loads(body.encode())
     assert plist["EnvironmentVariables"]["IMAGE_IDLE_UNLOAD_S"] == "300"
+
+
+def test_cli_service_refuses_other_platforms(monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setattr(sys, "platform", "linux")
+    result = CliRunner().invoke(cli, ["service", "install", "--dry-run"])
+    assert result.exit_code != 0
+    assert "macOS only" in result.output
