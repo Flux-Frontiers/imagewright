@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Flux-Frontiers/imagewright/main/assets/imagewright_banner.png" alt="imagewright" width="720"/>
+</p>
+
 # imagewright
 
 [![Python](https://img.shields.io/badge/python-3.12%20%7C%203.13-blue.svg)](https://www.python.org/)
@@ -30,6 +34,10 @@ MCP server, every command and the Python API.
 
 **Unreleased**
 
+- **A logo.** imagewright's Art Techno mark: prompt lines run into the die,
+  and the picture out is a lighthouse whose lamp room is the die.
+  `scripts/build_logo.py` draws the mark, banner, icon and the docs site's
+  logo and favicon.
 - **`imagewright service install`** runs the image server under launchd on
   macOS, so it starts by itself: at login, or with `--boot` (under `sudo`)
   at boot with nobody logged in, for a headless Mac. `imagewright service
