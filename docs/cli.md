@@ -70,6 +70,37 @@ needs the `serve` and `flux` extras; the SDXL server needs `serve` and `sdxl`.
 The server's environment variables, preload, idle unload and bind address are
 on [Run an image server](servers.md).
 
+## imagewright service install
+
+```text
+imagewright service install [OPTIONS]
+```
+
+Installs the server as a launchd service on macOS, starts it and waits for its
+`/health`. Without `--boot` it is a LaunchAgent that starts at login; with
+`--boot` it is a LaunchDaemon that starts at boot with nobody logged in, and
+the command needs `sudo`. The service runs `imagewright serve` from the same
+environment as the `imagewright` you run. Installing again replaces it.
+
+| Option | Default | Meaning |
+|---|---|---|
+| `--backend [flux\|sdxl]` | `flux` | Which server the service runs |
+| `--boot` | off | A LaunchDaemon in `/Library/LaunchDaemons` instead of a LaunchAgent |
+| `--host TEXT` | `127.0.0.1` | Address to bind; `0.0.0.0` serves the LAN |
+| `--port INTEGER` | 8090 (8091 for `sdxl`) | Port to bind |
+| `--idle-unload SECONDS` | 0 | FLUX unloads its model after this many idle seconds; 0 keeps it |
+| `--dry-run` | off | Print the property list and change nothing |
+
+## imagewright service uninstall
+
+```text
+imagewright service uninstall [--backend flux|sdxl] [--boot]
+```
+
+Stops the service and removes its property list. Use `--boot` (and `sudo`) for
+the LaunchDaemon. When and how to use either is on
+[Run an image server](servers.md#run-the-server-as-a-service).
+
 ## imagewright --version
 
 ```bash

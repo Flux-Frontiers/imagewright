@@ -1,6 +1,8 @@
 """The ``imagewright`` command line."""
 
+import json
 import os
+import sys
 import warnings
 from datetime import datetime
 from pathlib import Path
@@ -82,6 +84,20 @@ def generate(
     click.echo(str(path))
 
 
+def _server_module(backend: str):
+    """The server module for ``backend``, imported only when a command needs it.
+
+    :param backend: ``flux`` or ``sdxl``.
+    """
+    if backend == "flux":
+        from imagewright import flux_server  # noqa: PLC0415 - only the server commands need it
+
+        return flux_server
+    from imagewright import sdxl_server  # noqa: PLC0415 - only the server commands need it
+
+    return sdxl_server
+
+
 @cli.command()
 @click.option(
     "--backend",
@@ -114,14 +130,8 @@ def serve(backend: str, host: str | None, port: int | None) -> None:
     :param host: Bind address, or None for the environment or 127.0.0.1.
     :param port: Bind port, or None for the environment or the backend's default.
     """
-    if backend == "flux":
-        from imagewright import flux_server as server  # noqa: PLC0415 - only `serve` needs it
-
-        env_prefix = "MFLUX_SERVER"
-    else:
-        from imagewright import sdxl_server as server  # noqa: PLC0415 - only `serve` needs it
-
-        env_prefix = "SDXL_SERVER"
+    server = _server_module(backend)
+    env_prefix = "MFLUX_SERVER" if backend == "flux" else "SDXL_SERVER"
     try:
         server.require_extras()
     except MissingExtraError as exc:
@@ -134,3 +144,126 @@ def serve(backend: str, host: str | None, port: int | None) -> None:
     import uvicorn  # noqa: PLC0415 - the `serve` extra
 
     uvicorn.run(server.create_app(), host=host, port=port)
+
+
+@cli.group()
+def service() -> None:
+    """Run an image server under launchd, so it starts by itself (macOS).
+
+    `install --boot` makes a LaunchDaemon that starts at boot with nobody
+    logged in (needs sudo); without --boot it makes a LaunchAgent that starts
+    at login.
+    """
+
+
+_BACKEND = click.option(
+    "--backend", type=click.Choice(["flux", "sdxl"]), default="flux", show_default=True
+)
+_BOOT = click.option(
+    "--boot",
+    is_flag=True,
+    help="A LaunchDaemon that starts at boot, before login. Needs sudo.",
+)
+
+
+def _spec(backend: str, boot: bool, host: str, port: int | None, idle_unload: int):
+    """Build the service spec, refusing anything but macOS.
+
+    :param backend: ``flux`` or ``sdxl``.
+    :param boot: True for a boot service.
+    :param host: Bind address.
+    :param port: Bind port, or None for the backend's default.
+    :param idle_unload: FLUX idle-unload seconds.
+    """
+    from imagewright import service as svc  # noqa: PLC0415 - macOS only
+
+    if sys.platform != "darwin":
+        raise click.ClickException("`imagewright service` uses launchd and runs on macOS only")
+    user, home = svc.target_user(boot)
+    return svc.ServiceSpec(
+        backend=backend,
+        boot=boot,
+        user=user,
+        home=home,
+        executable=svc.imagewright_executable(),
+        host=host,
+        port=port or svc.DEFAULT_PORTS[backend],
+        idle_unload_s=idle_unload,
+    )
+
+
+@service.command("install")
+@_BACKEND
+@_BOOT
+@click.option(
+    "--host",
+    default="127.0.0.1",
+    show_default=True,
+    help="Address to bind. 0.0.0.0 serves the LAN; the server has no authentication.",
+)
+@click.option("--port", type=click.IntRange(1, 65535), help="Port. Default 8090 (8091 for sdxl).")
+@click.option(
+    "--idle-unload",
+    type=click.IntRange(0),
+    default=0,
+    show_default=True,
+    metavar="SECONDS",
+    help="FLUX unloads its model after this many idle seconds; 0 keeps it loaded.",
+)
+@click.option("--dry-run", is_flag=True, help="Print the property list and change nothing.")
+def service_install(
+    backend: str, boot: bool, host: str, port: int | None, idle_unload: int, dry_run: bool
+) -> None:
+    """Install the server as a launchd service, start it and wait for /health.
+
+    \f
+    :param backend: ``flux`` or ``sdxl``.
+    :param boot: True for a LaunchDaemon, False for a LaunchAgent.
+    :param host: Bind address.
+    :param port: Bind port, or None for the backend's default.
+    :param idle_unload: FLUX idle-unload seconds.
+    :param dry_run: Print the property list only.
+    """
+    import plistlib  # noqa: PLC0415
+
+    from imagewright import service as svc  # noqa: PLC0415 - macOS only
+
+    spec = _spec(backend, boot, host, port, idle_unload)
+    if dry_run:
+        click.echo(f"# {spec.plist_path}")
+        click.echo(plistlib.dumps(svc.build_plist(spec)).decode())
+        return
+    server = _server_module(backend)
+    try:
+        server.require_extras()
+    except MissingExtraError as exc:
+        raise click.ClickException(str(exc)) from exc
+    try:
+        health = svc.install(spec)
+    except svc.ServiceError as exc:
+        raise click.ClickException(str(exc)) from exc
+    click.echo(f"installed {spec.plist_path}")
+    click.echo(f"log {spec.log_path}")
+    click.echo(f"{spec.health_url} {json.dumps(health)}")
+
+
+@service.command("uninstall")
+@_BACKEND
+@_BOOT
+def service_uninstall(backend: str, boot: bool) -> None:
+    """Stop the launchd service and remove its property list.
+
+    \f
+    :param backend: ``flux`` or ``sdxl``.
+    :param boot: True for the LaunchDaemon, False for the LaunchAgent.
+    """
+    from imagewright import service as svc  # noqa: PLC0415 - macOS only
+
+    spec = _spec(backend, boot, "127.0.0.1", None, 0)
+    try:
+        removed = svc.uninstall(spec)
+    except svc.ServiceError as exc:
+        raise click.ClickException(str(exc)) from exc
+    click.echo(
+        f"removed {spec.plist_path}" if removed else f"no {spec.plist_path}; launchd unloaded"
+    )

@@ -67,3 +67,4 @@ nav:
       - FLUX server: api/flux_server.md
       - SDXL server: api/sdxl_server.md
       - MCP image helper: api/mcp_image.md
+      - launchd service: api/service.md

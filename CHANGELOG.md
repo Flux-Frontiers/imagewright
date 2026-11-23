@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **`imagewright service install` and `uninstall`.** On macOS they run the
+  server under launchd: a LaunchAgent that starts at login, or with `--boot`
+  (under `sudo`) a LaunchDaemon that starts at boot with nobody logged in, for
+  a headless Mac. The service runs `imagewright serve` from the installing
+  venv, sets `HOME` for the model cache, waits for `/health`, and refuses to
+  install while another server holds the port. `--dry-run` prints the property
+  list.
+
 - **A Zenodo DOI.** The concept DOI `10.5281/zenodo.24450350` is in the README
   (badge, APA and BibTeX) and in `CITATION.cff`. It always resolves to the
   latest archived version.
