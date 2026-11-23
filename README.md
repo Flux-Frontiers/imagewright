@@ -7,7 +7,7 @@
 [![Python](https://img.shields.io/badge/python-3.12%20%7C%203.13-blue.svg)](https://www.python.org/)
 [![License: Elastic-2.0](https://img.shields.io/badge/License-Elastic%202.0-blue.svg)](https://www.elastic.co/licensing/elastic-license)
 [![PyPI](https://img.shields.io/pypi/v/imagewright.svg)](https://pypi.org/project/imagewright/)
-[![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)](https://github.com/Flux-Frontiers/imagewright/releases)
+[![Version](https://img.shields.io/badge/version-0.2.0-blue.svg)](https://github.com/Flux-Frontiers/imagewright/releases)
 [![CI](https://github.com/Flux-Frontiers/imagewright/actions/workflows/ci.yml/badge.svg)](https://github.com/Flux-Frontiers/imagewright/actions/workflows/ci.yml)
 [![Docs](https://github.com/Flux-Frontiers/imagewright/actions/workflows/docs.yml/badge.svg)](https://flux-frontiers.github.io/imagewright/)
 [![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.24450350-blue.svg)](https://doi.org/10.5281/zenodo.24450350)
@@ -30,9 +30,21 @@ depended on a knowledge graph, and neither does this package.
 covers installation, choosing a backend, the servers, the HTTP contract, the
 MCP server, every command and the Python API.
 
+## Models
+
+On a Mac with Apple Silicon, run FLUX. Anywhere else, run SDXL.
+
+| Model | Runs on | Where |
+|---|---|---|
+| **FLUX.2 Klein 4B**, `mlx-community/flux2-klein-4b-4bit`, through mflux on MLX | Apple Silicon (macOS arm64) only | The FLUX server (`imagewright serve`, port 8090) and in-process mode. 4 steps by default. The primary backend |
+| **SDXL-Lightning**, the `ByteDance/SDXL-Lightning` 2-, 4- or 8-step UNet on `stabilityai/stable-diffusion-xl-base-1.0`, through diffusers | CUDA, then MPS, then CPU | The SDXL server (`imagewright serve --backend sdxl`, port 8091). The 4-step UNet by default. The first run downloads about 7 GB. The portable fallback for machines without Apple Silicon |
+| **OpenAI `gpt-image-1`** | OpenAI's servers | The `openai` backend, with an API key. The hosted option |
+
+The model licenses are under [License](#license).
+
 ## What's new
 
-**Unreleased**
+**0.2.0** (2026-11-23)
 
 - **A logo.** imagewright's Art Techno mark: prompt lines run into the die,
   and the picture out is a lighthouse whose lamp room is the die.
@@ -42,6 +54,8 @@ MCP server, every command and the Python API.
   macOS, so it starts by itself: at login, or with `--boot` (under `sudo`)
   at boot with nobody logged in, for a headless Mac. `imagewright service
   uninstall` removes it. See [Run the server as a service](#run-the-server-as-a-service).
+- **A Models section** names the models: FLUX.2 Klein 4B on Apple Silicon,
+  SDXL-Lightning anywhere else, and OpenAI `gpt-image-1` as the hosted option.
 - **A Zenodo DOI**, `10.5281/zenodo.24450350`, in the badge, the citation and
   `CITATION.cff`.
 
@@ -281,13 +295,13 @@ licensed for non-commercial use only.
 
 If you use imagewright in your research or project, please cite it:
 
-> Suchanek, E. G. (2026). *imagewright: Image Generation Over One HTTP Contract* (Version 0.1.0) [Software]. Flux-Frontiers. https://doi.org/10.5281/zenodo.24450350
+> Suchanek, E. G. (2026). *imagewright: Image Generation Over One HTTP Contract* (Version 0.2.0) [Software]. Flux-Frontiers. https://doi.org/10.5281/zenodo.24450350
 
 ```bibtex
 @software{suchanek_imagewright,
   author    = {Suchanek, Eric G.},
   title     = {{imagewright}: Image Generation Over One HTTP Contract},
-  version   = {0.1.0},
+  version   = {0.2.0},
   year      = {2026},
   publisher = {Flux-Frontiers},
   doi       = {10.5281/zenodo.24450350},

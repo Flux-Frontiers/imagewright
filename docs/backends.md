@@ -8,6 +8,9 @@ A backend is what renders the image. imagewright has three:
 | `mflux-local` | Renders with FLUX.2 Klein in the calling process, with no server | The `flux` extra (Apple Silicon) |
 | `openai` | Sends the prompt to OpenAI `gpt-image-1` | The `openai` extra and an API key |
 
+The models behind them, with their repository ids, ports and defaults, are
+under [Models](index.md#models).
+
 `imagewright generate`, `imagewright-mcp` and `resolve_image_config()` choose
 the backend the same way.
 

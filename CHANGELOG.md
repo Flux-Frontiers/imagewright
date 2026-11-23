@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-11-23
+
 ### Added
 
 - **A logo.** `scripts/build_logo.py` draws imagewright's Art Techno mark (prompt
@@ -27,9 +29,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Beta.** The PyPI classifier is now Development Status 4 - Beta. The
   README drops its status table for a What's new section.
 
+- **The models, by name.** The README and the docs home page have a Models
+  section: FLUX.2 Klein 4B (`mlx-community/flux2-klein-4b-4bit`, mflux on
+  MLX, Apple Silicon only, port 8090, 4 steps), SDXL-Lightning
+  (`ByteDance/SDXL-Lightning` UNets on
+  `stabilityai/stable-diffusion-xl-base-1.0`, diffusers on CUDA, MPS or CPU,
+  port 8091, about 7 GB on first run) and OpenAI `gpt-image-1`. On a Mac, run
+  FLUX; anywhere else, run SDXL.
+
 - **A Zenodo DOI.** The concept DOI `10.5281/zenodo.24450350` is in the README
   (badge, APA and BibTeX) and in `CITATION.cff`. It always resolves to the
   latest archived version.
+
+- **Lock refreshed** onto the latest releases: openai 3.58.0 (the `openai`
+  extra), charset-normalizer 3.5.3 and filelock 4.3.1, and in the dev tools
+  coverage 7.17.5, python-discovery 1.9.7 and virtualenv 21.15.13. No floor
+  changed.
 
 ## [0.1.0] - 2026-11-22
 

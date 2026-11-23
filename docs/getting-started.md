@@ -16,7 +16,7 @@ imagewright --version
 ```
 
 ```text
-imagewright, version 0.1.0
+imagewright, version 0.2.0
 ```
 
 ## Add the extras you need
