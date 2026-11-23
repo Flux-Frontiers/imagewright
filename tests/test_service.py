@@ -138,6 +138,33 @@ def test_install_refuses_when_something_else_holds_the_port(
     assert not spec.plist_path.exists()
 
 
+def test_a_refused_install_leaves_the_installed_service_alone(
+    tmp_path: Path, contract_server: ContractServer
+):
+    busy = int(contract_server.url.rsplit(":", 1)[1])
+    installed = _spec(tmp_path, port=busy + 1)
+    installed.plist_path.parent.mkdir(parents=True)
+    installed.plist_path.write_bytes(plistlib.dumps(svc.build_plist(installed)))
+    launchctl = FakeLaunchctl()
+    with pytest.raises(svc.ServiceError, match="something else already serves"):
+        svc.install(_spec(tmp_path, port=busy), run=launchctl, timeout_s=1)
+    assert launchctl.calls == []
+    assert plistlib.loads(installed.plist_path.read_bytes()) == svc.build_plist(installed)
+
+
+def test_reinstall_on_its_own_busy_port_replaces_the_service(
+    tmp_path: Path, contract_server: ContractServer
+):
+    port = int(contract_server.url.rsplit(":", 1)[1])
+    spec = _spec(tmp_path, port=port, idle_unload_s=60)
+    spec.plist_path.parent.mkdir(parents=True)
+    spec.plist_path.write_bytes(plistlib.dumps(svc.build_plist(_spec(tmp_path, port=port))))
+    health = svc.install(spec, run=FakeLaunchctl(contract_server), timeout_s=5)
+    assert health["status"] == "ok"
+    env = plistlib.loads(spec.plist_path.read_bytes())["EnvironmentVariables"]
+    assert env["IMAGE_IDLE_UNLOAD_S"] == "60"
+
+
 def test_install_reports_a_bootstrap_refusal(tmp_path: Path):
     port = int(closed_port_url().rsplit(":", 1)[1])
     spec = _spec(tmp_path, port=port)

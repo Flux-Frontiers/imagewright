@@ -162,6 +162,18 @@ def _bootout(spec: ServiceSpec, run: Runner) -> None:
         time.sleep(0.25)
 
 
+def _installed_port(spec: ServiceSpec) -> int | None:
+    """The port the already-installed copy of this service binds, or None.
+
+    :param spec: The service.
+    """
+    try:
+        env = plistlib.loads(spec.plist_path.read_bytes())["EnvironmentVariables"]
+        return int(env[f"{ENV_PREFIX[spec.backend]}_PORT"])
+    except (OSError, KeyError, ValueError, plistlib.InvalidFileException):
+        return None
+
+
 def _answers(url: str) -> bool:
     """True if ``url`` answers 200 right now.
 
@@ -210,12 +222,14 @@ def install(spec: ServiceSpec, run: Runner = subprocess.run, timeout_s: float = 
     _check_privileges(spec)
     if not spec.executable.exists():
         raise ServiceError(f"{spec.executable} does not exist")
-    _bootout(spec, run)
-    if _answers(spec.health_url):
+    # Check the port before touching the installed service, so a refusal leaves
+    # it running. The service's own port is busy with itself; that is a reinstall.
+    if _installed_port(spec) != spec.port and _answers(spec.health_url):
         raise ServiceError(
             f"something else already serves {spec.health_url}; stop it first "
             "(gutenberg_kg's LaunchAgent: `make image-agent-uninstall`)"
         )
+    _bootout(spec, run)
     spec.log_path.parent.mkdir(parents=True, exist_ok=True)
     spec.plist_path.parent.mkdir(parents=True, exist_ok=True)
     spec.plist_path.write_bytes(plistlib.dumps(build_plist(spec)))
