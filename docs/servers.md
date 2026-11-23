@@ -130,6 +130,42 @@ black images in float16.
 A Lightning UNet is distilled for a fixed step count, so the server runs 2, 4
 or 8 steps for the variant `SDXL_MODEL` names, whatever the request asks.
 
+## Run the server as a service
+
+On macOS, `imagewright service install` hands the server to launchd, which
+starts it by itself and restarts it if it exits. The group is `imagewright
+service`.
+
+At login, for a Mac someone uses:
+
+```bash
+imagewright service install --host 0.0.0.0
+```
+
+At boot, for a headless Mac that should serve before anyone logs in:
+
+```bash
+sudo /path/to/venv/bin/imagewright service install --boot --host 0.0.0.0 --idle-unload 300
+```
+
+Give `sudo` the full path to the venv's `imagewright`, because `sudo` does not
+keep your `PATH`. The daemon runs as the user who ran `sudo`, sets `HOME` to
+that user's home (launchd gives a daemon none, and the model cache lives under
+it) and logs to `~/Library/Logs/imagewright.log`. The labels are
+`local.imagewright` and `local.imagewright-sdxl`.
+
+The command refuses to install while another server answers on the port.
+gutenberg_kg's older LaunchAgent, `local.gutenkg-image`, serves on 8090; remove
+it first with `make image-agent-uninstall` in gutenberg_kg.
+
+With FileVault on, every boot stops at the unlock screen until someone types
+the password, so nothing starts after a power cut until then. For a restart
+you plan, `sudo fdesetup authrestart` unlocks the disk once, and the boot
+service comes up with nobody logged in. MLX reaches the GPU from the daemon.
+
+`imagewright service uninstall` (with `--boot` and `sudo` for the daemon)
+stops the service and removes it.
+
 ## Run a server from Python
 
 Each server module builds its FastAPI app with `create_app()`. To configure a

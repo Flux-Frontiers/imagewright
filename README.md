@@ -8,7 +8,7 @@
 [![Docs](https://github.com/Flux-Frontiers/imagewright/actions/workflows/docs.yml/badge.svg)](https://flux-frontiers.github.io/imagewright/)
 [![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.24450350-blue.svg)](https://doi.org/10.5281/zenodo.24450350)
 
-**imagewright** -- image generation over one HTTP contract.
+**imagewright** -- image generation over one HTTP contract. Beta.
 
 *Eric G. Suchanek, PhD -- Flux-Frontiers*
 
@@ -26,20 +26,20 @@ depended on a knowledge graph, and neither does this package.
 covers installation, choosing a backend, the servers, the HTTP contract, the
 MCP server, every command and the Python API.
 
-## Status
+## What's new
 
-Alpha (0.1.0). The client, the in-process and OpenAI backends, both image
-servers and the MCP tool work.
+**Unreleased**
 
-| Piece | State | What it does |
-|---|---|---|
-| Client | Done | Sends a prompt to any server that answers the contract and returns a PIL image. Finds a local server on ports 8090 and 8091 when none is configured |
-| In-process mode | Done | Renders with FLUX.2 Klein in the calling process, with no server running. Needs the `flux` extra |
-| OpenAI backend | Done | Sends the prompt to `gpt-image-1`. Needs the `openai` extra |
-| `imagewright generate` | Done | Writes one PNG from a prompt |
-| FLUX server | Done | `imagewright serve`. Serves FLUX.2 Klein through mflux on Apple Silicon. Keeps the model loaded between requests and can unload it when idle |
-| SDXL server | Done | `imagewright serve --backend sdxl`. Serves SDXL-Lightning through diffusers on CUDA, MPS or CPU |
-| MCP tool | Done | `imagewright-mcp`. Returns a generated image to an MCP client, compressed under the client's size limit. Needs the `mcp` extra |
+- **`imagewright service install`** runs the image server under launchd on
+  macOS, so it starts by itself: at login, or with `--boot` (under `sudo`)
+  at boot with nobody logged in, for a headless Mac. `imagewright service
+  uninstall` removes it. See [Run the server as a service](#run-the-server-as-a-service).
+- **A Zenodo DOI**, `10.5281/zenodo.24450350`, in the badge, the citation and
+  `CITATION.cff`.
+
+**0.1.0** (2026-11-22): first release. The client, in-process FLUX, the
+OpenAI backend, the FLUX and SDXL servers, `imagewright generate` and the
+`imagewright-mcp` tool.
 
 ## Install
 
@@ -163,6 +163,24 @@ runs. To run a second one for a test, give it another port, for example
 | `IMAGE_OUTPUT_DIR` | Both | Where `response_format=filepath` images go. Default: `imagewright_images` in the system temp directory |
 
 The SDXL server builds its pipeline before it opens its port.
+
+### Run the server as a service
+
+On macOS, launchd can start the server by itself and restart it if it exits:
+
+```bash
+imagewright service install --host 0.0.0.0                 # at login
+sudo "$(which imagewright)" service install --boot \
+    --host 0.0.0.0 --idle-unload 300                        # at boot, no login needed
+imagewright service uninstall                              # remove it (--boot and sudo for the daemon)
+```
+
+The service runs `imagewright serve` from the environment you install it
+from and logs to `~/Library/Logs/imagewright.log`. It refuses to install while
+another server answers on its port. Add `--dry-run` to print the launchd
+property list without changing anything. With FileVault on, a boot stops at
+the unlock screen until someone types the password; `sudo fdesetup
+authrestart` gets a planned restart past it.
 
 ## Use it from an MCP client
 
