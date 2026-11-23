@@ -39,6 +39,12 @@
   coverage 7.17.5, python-discovery 1.9.7 and virtualenv 21.15.13. No floor
   changed.
 
+### Security
+
+- **`ImageConfig` no longer prints its API key.** `api_key` is left out of the
+  dataclass `repr()`, so printing or logging a config, as `print(cfg)` or an
+  f-string does, cannot leak the OpenAI key. A test checks it.
+
 ---
 
 _Full changelog: [CHANGELOG.md](CHANGELOG.md)_

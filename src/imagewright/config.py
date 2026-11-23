@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 
 
@@ -37,13 +37,14 @@ class ImageConfig:
     :param backend: Which image provider to use.
     :param server_url: Image server base URL override (empty = use backend default).
     :param api_key: OpenAI API key (empty = read from OPENAI_API_KEY at call time).
+        Left out of ``repr()``, so printing or logging a config never shows it.
     :param model: Model-id override (empty = use backend default).
     :param steps: Inference steps for mflux backends (ignored for OpenAI).
     """
 
     backend: ImageBackend = ImageBackend.MFLUX_SERVE
     server_url: str = ""
-    api_key: str = ""
+    api_key: str = field(default="", repr=False)
     model: str = ""
     steps: int = 4
 

@@ -135,3 +135,13 @@ def test_image_config_from_env_image_model_beats_legacy(
     monkeypatch.setenv("IMAGE_MODEL", "dall-e-3")
     monkeypatch.setenv("GUTENKG_IMAGE_MODEL", "old-flux-model")
     assert image_config_from_env().model == "dall-e-3"
+
+
+def test_repr_never_shows_the_api_key(monkeypatch: pytest.MonkeyPatch):
+    """Printing a config, as anyone debugging does, must not print the key."""
+    secret = "not-a-real-key-" + "x" * 24  # pragma: allowlist secret
+    assert secret not in repr(ImageConfig(backend=ImageBackend.OPENAI, api_key=secret))
+    monkeypatch.setenv("OPENAI_API_KEY", secret)
+    cfg = image_config_from_env()
+    assert cfg.api_key == secret
+    assert secret not in repr(cfg) and secret not in str(cfg)

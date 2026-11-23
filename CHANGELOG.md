@@ -46,6 +46,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   coverage 7.17.5, python-discovery 1.9.7 and virtualenv 21.15.13. No floor
   changed.
 
+### Security
+
+- **`ImageConfig` no longer prints its API key.** `api_key` is left out of the
+  dataclass `repr()`, so printing or logging a config, as `print(cfg)` or an
+  f-string does, cannot leak the OpenAI key. A test checks it.
+
+
 ## [0.1.0] - 2026-11-22
 
 ### Added
